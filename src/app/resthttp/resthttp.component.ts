@@ -14,7 +14,7 @@ export class ResthttpComponent {
   readonly HTTP_URL: string = 'http://localhost:8080/';
   message: string = "no data yet";
 
-  public loginForm: FormGroup;
+  public loginForm: FormGroup; 
 
   constructor(private http: HttpClient, private fb: FormBuilder) 
   {
@@ -50,10 +50,24 @@ export class ResthttpComponent {
     // })
   }
 
-  custErrorHandler(e: any) {
-    console.log(e);
-    this.message = e.message;
+  
+  registerUser() {
+    let loginRequest: LoginRequest = {
+      "username" : this.loginForm.get('username')?.value,
+      "password" : this.loginForm.get('password')?.value
+    };
+
+    try {
+      this.http.post<Response>(this.HTTP_URL + 'user/signup',loginRequest).subscribe(response => {
+        this.message = response.message;
+      });
+    } catch(e) {
+      this.custErrorHandler(e);
+    }  
   }
 
-
+  custErrorHandler(e: any) {
+    this.message = e.message;
+    console.log(e);
+  }
 }
