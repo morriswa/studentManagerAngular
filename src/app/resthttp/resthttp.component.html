@@ -1,4 +1,10 @@
 <button (click)="sayHi()">Say hi shy computer...</button>
 <h1>{{ message }}</h1>
+<button (click)="sayHiWithCreds()">Say hi</button>
+<form [formGroup]="loginForm">
+    <input type="text" name="username" formControlName="username">
+    <input type="password" name="password" formControlName="password">
+
+</form>
 
 <p>resthttp works!</p>
