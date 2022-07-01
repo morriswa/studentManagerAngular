@@ -1,0 +1,11 @@
+<h1>{{ message }}</h1>
+<button (click)="sayHi()">Say hi</button>
+<button (click)="registerUser()">Register!</button>
+<button (click)="changePassword()">Change Password!</button>
+<form [formGroup]="loginForm">
+    <input type="text" name="username" formControlName="username">
+    <input type="password" name="password" formControlName="password">
+    <input type="password" name="new_password" formControlName="new_password">
+</form>
+
+<p>login works!</p>
