@@ -14,6 +14,19 @@ export class HttpService {
     return e.message;
   }
 
+  private login: LoginRequest = {
+    "username" : "",
+    "password" : ""
+  }
+
+  public saveLogin(login: LoginRequest) {
+    this.login = login;
+  }
+
+  public getLogin(): LoginRequest {
+    return this.login;
+  }
+
   readonly HTTP_URL: string = 'http://localhost:8080/';
 
   constructor(private http: HttpClient) { }
@@ -97,6 +110,23 @@ export class HttpService {
     }  
 
   }
+
+  public getAllStudents(login: LoginRequest): Observable<Response> {
+    try {
+      let request = {
+        "login" : login,
+        "data" : {
+          "message" : "nothing to report :("
+        }
+      }
+
+      return this.http.post<Response>(this.HTTP_URL + 'api/student/getall',request);
+    } catch (e) {
+      let err: string = this.custErrorHandler(e);
+      return of({"message" : err});
+    }
+  }
+
   // getStudentInfo() {
   // }
 }

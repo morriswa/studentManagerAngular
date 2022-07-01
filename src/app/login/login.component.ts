@@ -11,6 +11,13 @@ import { LoginRequest } from '../interface/login-request';
 })
 export class LoginComponent {
 
+  private buildLoginCreds(): LoginRequest {
+    return {
+      "username" : this.loginForm.get('username')?.value,
+      "password" : this.loginForm.get('password')?.value
+    }
+  }
+
   public message: string; 
   public loginForm: FormGroup;
   
@@ -25,6 +32,9 @@ export class LoginComponent {
 
   sayHi(): void {
     let login = this.buildLoginCreds();
+    
+    this.httpService.saveLogin(login);
+
     let response = this.httpService.sayHi(login);
     response.subscribe(response => {
       this.message = response.message;
@@ -43,12 +53,5 @@ export class LoginComponent {
     response.subscribe(response => {
       this.message = response.message;
     })
-  }
-
-  buildLoginCreds(): LoginRequest {
-    return {
-      "username" : this.loginForm.get('username')?.value,
-      "password" : this.loginForm.get('password')?.value
-    }
   }
 }
