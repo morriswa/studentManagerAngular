@@ -18,21 +18,29 @@ export class LoginComponent {
     }
   }
 
+  
+  
   public logout(): void {
 
   }
 
   public message: string; 
   public loginForm: FormGroup;
-  
+  private listOfStudents: Array<string> = Array();
+
   constructor(private httpService: HttpService, private fb: FormBuilder) {
     this.message = "";
+
     this.loginForm = this.fb.group({
       "username" : "",
       "password" : "",
-      "new_password" : ""
+      "new_password" : "",
+      "nickname" : "",
     })
+
   }
+
+
 
   public async sayHi() {
     let login = this.buildLoginCreds();
@@ -50,5 +58,29 @@ export class LoginComponent {
                               .changePassword(
                                 this.buildLoginCreds(),
                                 this.loginForm.get('new_password')?.value)).message;
+  }
+
+  public async addStudent() {
+    this.httpService.addNewStudent(this.buildLoginCreds(), this.loginForm.get('nickname')?.value)
+    this.refreshListOfStudents();
+  }
+
+  public async delStudent() {
+    this.httpService.delStudent(this.buildLoginCreds(), this.loginForm.get('nickname')?.value)
+    this.refreshListOfStudents();
+  }
+
+
+  public async refreshListOfStudents() {
+    this.httpService.getAllStudents(this.buildLoginCreds()).then(list => {
+      this.listOfStudents = list;
+    })
+    return this.listOfStudents;
+  }
+
+  public getListOfStudents() {
+    this.refreshListOfStudents().then(list => {
+      return list;
+    });
   }
 }

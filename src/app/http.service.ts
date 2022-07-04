@@ -90,6 +90,10 @@ export class HttpService {
     }   
   }
 
+  public async delStudent(login: LoginRequest, nickname: string) {
+
+  }
+
   public async updateStudentInfo( login: LoginRequest, 
                                   nickname: string, 
                                   name_first: string, 
@@ -123,7 +127,7 @@ export class HttpService {
         }
       }
       let response: Response = await lastValueFrom(this.http.post<Response>(this.HTTP_URL + 'api/student/getall',request));
-      return response
+      return response.message.split("|")
     } catch (e) {
       let err: string = this.custErrorHandler(e);
       return Promise.reject({"message" : err});
