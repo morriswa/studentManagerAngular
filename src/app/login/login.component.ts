@@ -18,11 +18,15 @@ export class LoginComponent {
     }
   }
 
+  public logout(): void {
+
+  }
+
   public message: string; 
   public loginForm: FormGroup;
   
   constructor(private httpService: HttpService, private fb: FormBuilder) {
-    this.message = "--nothing to display--";
+    this.message = "";
     this.loginForm = this.fb.group({
       "username" : "",
       "password" : "",

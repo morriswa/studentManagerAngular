@@ -1,0 +1,9 @@
+#loginForm {
+    display: flex;
+    flex-direction: row;
+    gap: 20px;
+}
+
+#loginPanel {
+    max-width: 50%;
+}

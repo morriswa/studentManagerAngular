@@ -1,11 +1,63 @@
-<h1>{{ message }}</h1>
-<button (click)="sayHi()">Say hi</button>
-<button (click)="registerUser()">Register!</button>
-<button (click)="changePassword()">Change Password!</button>
-<form [formGroup]="loginForm">
-    <input type="text" name="username" formControlName="username">
-    <input type="password" name="password" formControlName="password">
-    <input type="password" name="new_password" formControlName="new_password">
-</form>
+<mat-expansion-panel id="loginPanel">
+    <mat-expansion-panel-header>
+        <mat-panel-title>Profile</mat-panel-title>
+        <mat-panel-description>Login/Logout, Switch Users, Change Password</mat-panel-description>
+    </mat-expansion-panel-header>
+    <mat-accordion>
+        <mat-expansion-panel>
+            <mat-expansion-panel-header>
+                <mat-panel-title>Login</mat-panel-title>
+            </mat-expansion-panel-header>
+            
+            <h1>{{ message }}</h1>
 
-<p>login works!</p>
+            <form [formGroup]="loginForm" id="loginForm">
+                <mat-form-field appearance="outline">
+                    <mat-label>Username</mat-label>
+                    <input matInput name="username" formControlName="username">
+                </mat-form-field>
+                
+                <mat-form-field appearance="outline">
+                    <mat-label>Password</mat-label>
+                    <input matInput type="password" name="password" formControlName="password">
+                </mat-form-field>
+            </form>
+
+            <mat-action-row>
+                <button mat-raised-button color="primary" (click)="sayHi()">Login!</button>
+                <button mat-raised-button color="primary" (click)="logout()">Logout!</button>
+            </mat-action-row>
+        </mat-expansion-panel>
+
+        <mat-expansion-panel>
+            <mat-expansion-panel-header>
+            <mat-panel-title>Change Password</mat-panel-title>
+            <mat-panel-description></mat-panel-description>
+            </mat-expansion-panel-header>
+            
+            <h1>{{ message }}</h1>
+
+            <form [formGroup]="loginForm" id="loginForm">
+                <mat-form-field appearance="fill">
+                    <mat-label>Username</mat-label>
+                    <input matInput name="username" formControlName="username">
+                </mat-form-field>
+        
+                <mat-form-field appearance="fill">
+                    <mat-label>Password</mat-label>
+                    <input matInput type="password" name="password" formControlName="password">
+                </mat-form-field>
+
+                <mat-form-field appearance="fill">
+                    <mat-label>New Password</mat-label>
+                    <input matInput type="password" name="new_password" formControlName="new_password">
+                </mat-form-field>
+            </form>
+
+            <mat-action-row>
+                <button mat-raised-button color="primary" (click)="sayHi()">Check current Password!</button>
+                <button mat-raised-button color="primary" (click)="changePassword()">Change Password!</button>
+            </mat-action-row>
+        </mat-expansion-panel>
+    </mat-accordion>
+</mat-expansion-panel>
