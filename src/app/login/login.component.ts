@@ -30,28 +30,21 @@ export class LoginComponent {
     })
   }
 
-  sayHi(): void {
+  public async sayHi() {
     let login = this.buildLoginCreds();
-    
     this.httpService.saveLogin(login);
 
-    let response = this.httpService.sayHi(login);
-    response.subscribe(response => {
-      this.message = response.message;
-    })
+    this.message = (await this.httpService.sayHi(login)).message;
   }
 
-  registerUser(): void {
-    let response = this.httpService.registerUser(this.buildLoginCreds());
-    response.subscribe(response => {
-      this.message = response.message;
-    })
+  public async registerUser() {
+    this.message = (await this.httpService.registerUser(this.buildLoginCreds())).message;
   }
 
-  changePassword(): void {
-    let response = this.httpService.changePassword(this.buildLoginCreds(),this.loginForm.get('new_password')?.value);
-    response.subscribe(response => {
-      this.message = response.message;
-    })
+  public async changePassword() {
+    this.message = (await this.httpService
+                              .changePassword(
+                                this.buildLoginCreds(),
+                                this.loginForm.get('new_password')?.value)).message;
   }
 }

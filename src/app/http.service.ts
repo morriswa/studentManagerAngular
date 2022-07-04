@@ -1,6 +1,6 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable,of } from 'rxjs';
+import { Observable,of,lastValueFrom } from 'rxjs';
 import { LoginRequest } from './interface/login-request';
 import { Response } from './interface/response';
 
@@ -32,7 +32,7 @@ export class HttpService {
   constructor(private http: HttpClient) { }
 
   // POST api/hello >> Response{ string }
-  public sayHi(login: LoginRequest): Observable<Response> { 
+  public async sayHi(login: LoginRequest) { 
     try {
       let request = {
         "login" : login,
@@ -40,58 +40,62 @@ export class HttpService {
           "message" : "nothing to report"
         }
       }
-      return this.http.post<Response>(this.HTTP_URL + 'api/hello',request);
+      let response: Response = await lastValueFrom(this.http.post<Response>(this.HTTP_URL + 'api/hello',request));
+      return response;
     } catch (e: any) {
       let errorReport: string = this.custErrorHandler(e);
-      return of({"message" : errorReport});
+      return Promise.reject({"message" : errorReport});
     }
   }
 
   // POST user/signup
-  registerUser(newUserRequest: LoginRequest): Observable<Response> {
+  public async registerUser(newUserRequest: LoginRequest) {
     try {
       let request = {
         "login" : newUserRequest
       }
-      return this.http.post<Response>(this.HTTP_URL + 'user/signup',request);
+      let response: Response = await lastValueFrom(this.http.post<Response>(this.HTTP_URL + 'user/signup',request));
+      return response;
     } catch(e) {
       let errorReport: string = this.custErrorHandler(e);
-      return of({"message" : errorReport});
-    }  
+      return Promise.reject({"message" : errorReport});
+    } 
   }
   
-  changePassword(login: LoginRequest, new_password: string): Observable<Response> {
+  public async changePassword(login: LoginRequest, new_password: string) {
     try {
       let request = {
         "login" : login,
         "new_password" : new_password
       }
-      return this.http.put<Response>(this.HTTP_URL + 'user/changepassword',request);
+      let response: Response = await lastValueFrom(this.http.put<Response>(this.HTTP_URL + 'user/changepassword',request));
+      return response;
     } catch(e) {
       let errorReport: string = this.custErrorHandler(e);
-      return of({"message" : errorReport});
+      return Promise.reject({"message" : errorReport});
     }  
   }
 
-  addNewStudent(login: LoginRequest, nickname: string): Observable<Response> {
+  public async addNewStudent(login: LoginRequest, nickname: string) {
     try {
       let request = {
         "login" : login,
         "new_student_nickname" : nickname
       }
-      return this.http.post<Response>(this.HTTP_URL + 'api/student/add',request);
+      let response: Response = await lastValueFrom(this.http.post<Response>(this.HTTP_URL + 'api/student/add',request));
+      return response;
     } catch(e) {
       let err: string = this.custErrorHandler(e);
-      return of({"message" : err});
+      return Promise.reject({"message" : err});
     }   
   }
 
-  updateStudentInfo(login: LoginRequest, 
-                    nickname: string, 
-                    name_first: string, 
-                    name_last: string, 
-                    name_middle: string, 
-                    school_attending: string): Observable<Response>
+  public async updateStudentInfo( login: LoginRequest, 
+                                  nickname: string, 
+                                  name_first: string, 
+                                  name_last: string, 
+                                  name_middle: string, 
+                                  school_attending: string)
   {
     try {
       let request = {
@@ -102,16 +106,15 @@ export class HttpService {
         "name_middle" : name_middle,
         "school_attending" : school_attending,
       }
-  
-      return this.http.put<Response>(this.HTTP_URL + 'api/student/updateinfos',request);
+      let response: Response = await lastValueFrom(this.http.put<Response>(this.HTTP_URL + 'api/student/updateinfos',request));
+      return response;
     } catch(e) {
       let err: string = this.custErrorHandler(e);
-      return of({"message" : err});
+      return Promise.reject({"message" : err});
     }  
-
   }
 
-  public getAllStudents(login: LoginRequest): Observable<Response> {
+  public async getAllStudents(login: LoginRequest) {
     try {
       let request = {
         "login" : login,
@@ -119,11 +122,11 @@ export class HttpService {
           "message" : "nothing to report :("
         }
       }
-
-      return this.http.post<Response>(this.HTTP_URL + 'api/student/getall',request);
+      let response: Response = await lastValueFrom(this.http.post<Response>(this.HTTP_URL + 'api/student/getall',request));
+      return response
     } catch (e) {
       let err: string = this.custErrorHandler(e);
-      return of({"message" : err});
+      return Promise.reject({"message" : err});
     }
   }
 

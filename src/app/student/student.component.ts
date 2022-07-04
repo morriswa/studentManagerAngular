@@ -28,11 +28,8 @@ export class StudentComponent implements OnInit {
   ngOnInit(): void {
   }
 
-  getAllStudents(): void {
-    let response = this.httpService.getAllStudents(this.buildLoginCreds());
-    response.subscribe(response => {
-      this.message = response.message;
-    })
+  public async getAllStudents() {
+    this.message = (await this.httpService.getAllStudents(this.buildLoginCreds())).message;
   }
 
 }
