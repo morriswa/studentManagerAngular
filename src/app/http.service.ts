@@ -82,8 +82,7 @@ export class HttpService {
         "login" : login,
         "new_student_nickname" : nickname
       }
-      let response: Response = await lastValueFrom(this.http.post<Response>(this.HTTP_URL + 'api/student/add',request));
-      return response;
+      return await lastValueFrom(this.http.post<Response>(this.HTTP_URL + 'api/student/add',request));
     } catch(e) {
       let err: string = this.custErrorHandler(e);
       return Promise.reject({"message" : err});
@@ -91,7 +90,16 @@ export class HttpService {
   }
 
   public async delStudent(login: LoginRequest, nickname: string) {
-
+    try {
+      let request = {
+        "login" : login,
+        "new_student_nickname" : nickname
+      }
+      return await lastValueFrom(this.http.put<Response>(this.HTTP_URL + 'api/student/del',request));
+    } catch(e) {
+      let err: string = this.custErrorHandler(e);
+      return Promise.reject({"message" : err});
+    }   
   }
 
   public async updateStudentInfo( login: LoginRequest, 

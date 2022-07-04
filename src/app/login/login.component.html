@@ -4,7 +4,7 @@
         <mat-panel-description>Login/Logout, Switch Users, Change Password</mat-panel-description>
     </mat-expansion-panel-header>
     <mat-accordion>
-        <mat-expansion-panel>
+        <mat-expansion-panel> <!--Login--> 
             <mat-expansion-panel-header>
                 <mat-panel-title>Login</mat-panel-title>
             </mat-expansion-panel-header>
@@ -30,7 +30,7 @@
             </mat-action-row>
         </mat-expansion-panel>
 
-        <mat-expansion-panel>
+        <mat-expansion-panel> <!--Change Password-->
             <mat-expansion-panel-header>
             <mat-panel-title>Change Password</mat-panel-title>
             </mat-expansion-panel-header>
@@ -60,12 +60,13 @@
             </mat-action-row>
         </mat-expansion-panel>
 
-        <mat-expansion-panel>
+        <mat-expansion-panel> <!--Student Menu-->
             <mat-expansion-panel-header>
                 <mat-panel-title>Student Menu</mat-panel-title>
             </mat-expansion-panel-header>
             
-            <h1>Students associated with your account: {{ getListOfStudents() }}</h1>
+            <h1>Students associated with your account: {{ listOfStudents }}</h1>
+            <h2>{{ message }}</h2>
 
             <form [formGroup]="loginForm" id="loginForm">
                 <mat-form-field appearance="outline">
@@ -79,5 +80,7 @@
                 <button mat-button color="primary" (click)="delStudent()">Delete Student</button>
             </mat-action-row>
         </mat-expansion-panel>
+
+        
     </mat-accordion>
 </mat-expansion-panel>

@@ -9,7 +9,7 @@ import { LoginRequest } from '../interface/login-request';
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.css']
 })
-export class LoginComponent {
+export class LoginComponent implements OnInit {
 
   private buildLoginCreds(): LoginRequest {
     return {
@@ -26,7 +26,7 @@ export class LoginComponent {
 
   public message: string; 
   public loginForm: FormGroup;
-  private listOfStudents: Array<string> = Array();
+  public listOfStudents: Array<string>; 
 
   constructor(private httpService: HttpService, private fb: FormBuilder) {
     this.message = "";
@@ -36,8 +36,13 @@ export class LoginComponent {
       "password" : "",
       "new_password" : "",
       "nickname" : "",
-    })
+    });
 
+    this.listOfStudents = Array("Please log in");
+  }
+
+  ngOnInit(): void {
+    throw new Error('Method not implemented.');
   }
 
 
@@ -45,6 +50,7 @@ export class LoginComponent {
   public async sayHi() {
     let login = this.buildLoginCreds();
     this.httpService.saveLogin(login);
+    this.refreshListOfStudents();
 
     this.message = (await this.httpService.sayHi(login)).message;
   }
@@ -61,26 +67,17 @@ export class LoginComponent {
   }
 
   public async addStudent() {
-    this.httpService.addNewStudent(this.buildLoginCreds(), this.loginForm.get('nickname')?.value)
+    this.message = (await this.httpService.addNewStudent(this.buildLoginCreds(), this.loginForm.get('nickname')?.value)).message;
     this.refreshListOfStudents();
   }
 
   public async delStudent() {
-    this.httpService.delStudent(this.buildLoginCreds(), this.loginForm.get('nickname')?.value)
+    this.message = (await this.httpService.delStudent(this.buildLoginCreds(), this.loginForm.get('nickname')?.value)).message;
     this.refreshListOfStudents();
   }
 
-
   public async refreshListOfStudents() {
-    this.httpService.getAllStudents(this.buildLoginCreds()).then(list => {
-      this.listOfStudents = list;
-    })
-    return this.listOfStudents;
+    this.listOfStudents = await this.httpService.getAllStudents(this.buildLoginCreds())
   }
 
-  public getListOfStudents() {
-    this.refreshListOfStudents().then(list => {
-      return list;
-    });
-  }
 }
