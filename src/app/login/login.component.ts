@@ -18,8 +18,7 @@ export class LoginComponent implements OnInit {
     }
   }
 
-  
-  
+
   public logout(): void {
 
   }
@@ -52,32 +51,68 @@ export class LoginComponent implements OnInit {
     this.httpService.saveLogin(login);
     this.refreshListOfStudents();
 
-    this.message = (await this.httpService.sayHi(login)).message;
+    
+    await this.httpService.sayHi(login)
+    .then(promise => {
+      this.message = promise.message;
+    }).catch(err => {
+      console.warn(err);
+      this.message = err.message;
+    });
   }
 
   public async registerUser() {
-    this.message = (await this.httpService.registerUser(this.buildLoginCreds())).message;
+    await this.httpService.registerUser(this.buildLoginCreds())
+    .then(promise => {
+      this.message = promise.message;
+    }).catch(err => {
+      console.warn(err);
+      this.message = err.message;
+    });
   }
 
   public async changePassword() {
-    this.message = (await this.httpService
-                              .changePassword(
-                                this.buildLoginCreds(),
-                                this.loginForm.get('new_password')?.value)).message;
+    await this.httpService.changePassword(
+          this.buildLoginCreds(),
+          this.loginForm.get('new_password')?.value)
+    .then(promise => {
+      this.message = promise.message;
+    }).catch(err => {
+      console.warn(err);
+      this.message = err.message;
+    })
   }
 
   public async addStudent() {
-    this.message = (await this.httpService.addNewStudent(this.buildLoginCreds(), this.loginForm.get('nickname')?.value)).message;
+    await this.httpService.addNewStudent(this.buildLoginCreds(), this.loginForm.get('nickname')?.value)
+    .then(promise => {
+      this.message = promise.message;
+    }).catch(err => {
+      console.warn(err);
+      this.message = err.message;
+    })
     this.refreshListOfStudents();
   }
 
   public async delStudent() {
-    this.message = (await this.httpService.delStudent(this.buildLoginCreds(), this.loginForm.get('nickname')?.value)).message;
+    await this.httpService.delStudent(this.buildLoginCreds(), this.loginForm.get('nickname')?.value)
+    .then(promise => {
+      this.message = promise.message;
+    }).catch(err => {
+      console.warn(err);
+      this.message = err.message;
+    });
     this.refreshListOfStudents();
   }
 
   public async refreshListOfStudents() {
-    this.listOfStudents = await this.httpService.getAllStudents(this.buildLoginCreds())
+    await this.httpService.getAllStudents(this.buildLoginCreds())
+    .then(promise => {
+      this.listOfStudents = promise;
+    }).catch(err => {
+      console.warn(err);
+      this.message = err.message;
+    });
   }
 
 }
