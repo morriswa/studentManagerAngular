@@ -1,13 +1,3 @@
-<mat-accordion>
-<mat-expansion-panel class="loginPanel" *ngIf="isLoggedIn()"> <!--Edit Profile-->
-    <mat-expansion-panel-header>
-        <mat-panel-title>Edit Profile</mat-panel-title>
-        <mat-panel-description>Change password</mat-panel-description>
-    </mat-expansion-panel-header>
-    
-    <app-userprofile></app-userprofile>
-</mat-expansion-panel>
-
 <mat-expansion-panel class="loginPanel"> <!--Login--> 
     <mat-expansion-panel-header>
         <mat-panel-title>Login</mat-panel-title>
@@ -38,6 +28,3 @@
         <button mat-raised-button color="primary" (click)="logout()">Logout!</button>
     </mat-action-row>
 </mat-expansion-panel>
-
-
-</mat-accordion>

@@ -4,8 +4,10 @@
         <mat-panel-description></mat-panel-description>
     </mat-expansion-panel-header>
     
+    <mat-accordion> 
+        <app-userprofile *ngIf="isLoggedIn()"></app-userprofile>
+        <app-login></app-login>
+    </mat-accordion>    
 
-    <app-login></app-login>
     <app-student *ngIf="isLoggedIn()"></app-student>
-
 </mat-expansion-panel>

@@ -1,7 +1,14 @@
-<mat-accordion>
+<mat-expansion-panel> <!--Edit Profile-->
+    <mat-expansion-panel-header>
+        <mat-panel-title>Edit Profile</mat-panel-title>
+        <mat-panel-description>Change password</mat-panel-description>
+    </mat-expansion-panel-header>
+
+    <mat-accordion>
     <mat-expansion-panel>
-        <mat-expansion-panel-header><mat-panel-title>Change Password</mat-panel-title></mat-expansion-panel-header>
-        
+        <mat-expansion-panel-header>
+            <mat-panel-title>Change Password</mat-panel-title>
+        </mat-expansion-panel-header>
 
         <form [formGroup]="profileForm" id="loginForm">
             <mat-form-field appearance="fill">
@@ -24,6 +31,7 @@
         <mat-action-row>
             <button mat-raised-button color="primary" (click)="changePassword()">Change Password!</button>
         </mat-action-row>
+        
     </mat-expansion-panel>
-    
-</mat-accordion>
+    </mat-accordion>
+</mat-expansion-panel>

@@ -27,6 +27,10 @@ export class UserprofileComponent implements OnInit {
   ngOnInit(): void {
   }
 
+  // isLoggedIn():boolean{
+  //   return this.ls.getStatus();
+  // }
+
   public async changePassword() {
     await this.hs.changePassword(
           this.ls.getLogin(),
