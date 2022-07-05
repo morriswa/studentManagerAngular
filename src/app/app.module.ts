@@ -8,6 +8,9 @@ import { MatExpansionModule, MatExpansionPanelActionRow } from '@angular/materia
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
+import { MatOptionModule } from '@angular/material/core';
+import {MatSelectModule} from '@angular/material/select';
+
 
 import { AppRoutingModule } from './app-routing.module';
 import { HttpService } from './http.service';
@@ -15,7 +18,6 @@ import { AppComponent } from './app.component';
 import { LoginComponent } from './login/login.component';
 import { StudentComponent } from './student/student.component';
 import { UserprofileComponent } from './userprofile/userprofile.component';
-
 
 @NgModule({
   declarations: [
@@ -35,7 +37,9 @@ import { UserprofileComponent } from './userprofile/userprofile.component';
     MatExpansionModule,
     MatFormFieldModule,
     MatInputModule,
-    MatButtonModule
+    MatButtonModule,
+    MatOptionModule,
+    MatSelectModule
   ],
   providers: [HttpService],
   bootstrap: [AppComponent]

@@ -17,6 +17,9 @@ export class StudentComponent implements OnInit {
   private listOfStudents: Array<string> = Array("Not init :("); 
 
   public studentForm: FormGroup;
+  public courseForm: FormGroup;
+
+  public readonly COURSE_TERMS: string[] = Array("FALL","WINTER","SPRING","SUMMER","OTHER")
 
   constructor(private hs: HttpService, private ls: LoginService, private fb: FormBuilder) {
     this.message = "";
@@ -28,6 +31,14 @@ export class StudentComponent implements OnInit {
 
     this.studentForm = this.fb.group({
       "nickname" : ""
+    })
+
+    this.courseForm = this.fb.group({
+      "year" : "",
+      "term" : "",
+      "title" : "",
+      "creditHrs" : "",
+      "gradepoint" : ""
     })
 
   }
@@ -91,4 +102,35 @@ export class StudentComponent implements OnInit {
   public getListOfCourses() {
     return this.courses;
   }
+  
+  public async addCourse(nickname: string) {
+    await this.hs.addCourse(
+      this.ls.getLogin(),
+      nickname,
+      this.courseForm.get('year')?.value,
+      this.courseForm.get('term')?.value,
+      this.courseForm.get('title')?.value,
+      this.courseForm.get('creditHrs')?.value,
+      this.courseForm.get('gradepoint')?.value,
+    ).then(promise => {
+      this.pullNewListOfCourses(nickname);
+    }).catch(err => {
+      console.warn(err);
+      this.message = err.message;
+    })
+  }
+
+  public async delCourse(nickname: string, id: number) {
+    await this.hs.delCourse(
+      this.ls.getLogin(),
+      nickname,
+      id
+    ).then(promise => {
+      this.pullNewListOfCourses(nickname);
+    }).catch(err => {
+      console.warn(err);
+      this.message = err.message;
+    })
+  }
+  
 }

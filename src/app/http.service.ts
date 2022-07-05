@@ -69,7 +69,7 @@ export class HttpService {
   public async addNewStudent(login: LoginRequest, nickname: string) {
     let request = {
       "login" : login,
-      "new_student_nickname" : nickname
+      "nickname" : nickname
     }
     let response: any = await lastValueFrom(this.http.post<Response>(this.HTTP_URL + 'api/student/add',request));
     if (response.exception != null) {
@@ -81,7 +81,7 @@ export class HttpService {
   public async delStudent(login: LoginRequest, nickname: string) {
     let request = {
       "login" : login,
-      "new_student_nickname" : nickname
+      "nickname" : nickname
     }
     let response: any = await lastValueFrom(this.http.put<Response>(this.HTTP_URL + 'api/student/del',request));
     if (response.exception != null) {
@@ -144,7 +144,38 @@ export class HttpService {
     let courseResponse: CourseResponse = response;
     return courseResponse;
   }
-  
-  // getStudentInfo() {
-  // }
+ 
+  public async addCourse( login: LoginRequest, nickname: string, year: number, term: string, 
+                          title: string, creditHrs: number, gradepoint: number)
+  {
+    let request = {
+      "login": login,
+      "nickname": nickname,
+      "year" : year,
+      "term" : term,
+      "title" : title,
+      "creditHrs" : creditHrs,
+      "gradepoint" : gradepoint
+    } 
+    let response: any = await lastValueFrom(this.http.post<Response>(this.HTTP_URL + 'api/course/add',request));
+    if (response.exception != null) {
+      throw new Error(response.message);
+    } 
+    let addCourseResponse: Response = response;
+    return addCourseResponse;
+  }
+
+  public async delCourse(login: LoginRequest, nickname: string, id: number) {
+    let request = {
+      "login": login,
+      "nickname": nickname,
+      "id" : id
+    } 
+    let response: any = await lastValueFrom(this.http.put<Response>(this.HTTP_URL + 'api/course/del',request));
+    if (response.exception != null) {
+      throw new Error(response.message);
+    } 
+    let addCourseResponse: Response = response;
+    return addCourseResponse;
+  }
 }
