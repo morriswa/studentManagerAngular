@@ -1,1 +1,11 @@
-<app-login></app-login>
+<mat-expansion-panel>
+    <mat-expansion-panel-header>
+        <mat-panel-title>App</mat-panel-title>
+        <mat-panel-description></mat-panel-description>
+    </mat-expansion-panel-header>
+    
+
+    <app-login></app-login>
+    <app-student *ngIf="isLoggedIn()"></app-student>
+
+</mat-expansion-panel>
