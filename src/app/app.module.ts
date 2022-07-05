@@ -13,12 +13,14 @@ import { AppRoutingModule } from './app-routing.module';
 import { HttpService } from './http.service';
 import { AppComponent } from './app.component';
 import { LoginComponent } from './login/login.component';
+import { StudentComponent } from './student/student.component';
 
 
 @NgModule({
   declarations: [
     AppComponent,
-    LoginComponent
+    LoginComponent,
+    StudentComponent
   ],
   imports: [
     BrowserModule,

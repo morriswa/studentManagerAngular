@@ -1,0 +1,36 @@
+<mat-accordion>
+                
+    <mat-expansion-panel>
+        <mat-expansion-panel-header>
+            <mat-panel-title>Profiles:</mat-panel-title>
+            <mat-panel-description>Profile Editor</mat-panel-description>
+        </mat-expansion-panel-header> 
+
+        <form [formGroup]="studentForm" id="loginForm">
+            <mat-form-field appearance="outline">
+                <mat-label>Student Nickname</mat-label>
+                <input matInput name="nickname" formControlName="nickname">
+            </mat-form-field>
+        </form>
+
+        <h2>{{ message }}</h2>
+    
+        <mat-action-row>
+            <button mat-raised-button color="primary" (click)="addStudent()">Add Student!</button>
+            <button mat-button color="primary" (click)="delStudent()">Delete Student</button>
+        </mat-action-row>
+    </mat-expansion-panel>
+
+    <mat-expansion-panel *ngFor="let student of getListOfStudent()">
+        <mat-expansion-panel-header>
+        <mat-panel-title>Student: {{ student }}</mat-panel-title>
+        </mat-expansion-panel-header> 
+
+        
+
+
+
+
+
+    </mat-expansion-panel>
+</mat-accordion>

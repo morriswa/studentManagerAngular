@@ -3,6 +3,7 @@ import { FormBuilder, FormGroup } from '@angular/forms';
 import { Observable } from 'rxjs';
 import { HttpService } from '../http.service';
 import { LoginRequest } from '../interface/login-request';
+import { LoginService } from '../login.service';
 
 @Component({
   selector: 'app-login',
@@ -11,23 +12,17 @@ import { LoginRequest } from '../interface/login-request';
 })
 export class LoginComponent implements OnInit {
 
-  private buildLoginCreds(): LoginRequest {
+  private getLoginRequestFromForm(): LoginRequest {
     return {
       "username" : this.loginForm.get('username')?.value,
       "password" : this.loginForm.get('password')?.value
     }
   }
 
-
-  public logout(): void {
-
-  }
-
   public message: string; 
   public loginForm: FormGroup;
-  private listOfStudents: Array<string>; 
 
-  constructor(private httpService: HttpService, private fb: FormBuilder) {
+  constructor(private httpService: HttpService, private loginService:LoginService, private fb: FormBuilder) {
     this.message = "";
 
     this.loginForm = this.fb.group({
@@ -37,22 +32,20 @@ export class LoginComponent implements OnInit {
       "nickname" : "",
     });
 
-    this.listOfStudents = Array("Please log in");
   }
 
   ngOnInit(): void {
     throw new Error('Method not implemented.');
   }
 
-
-
   public async sayHi() {
-    let login = this.buildLoginCreds();
-    this.httpService.saveLogin(login);
-    this.refreshListOfStudents();
+    await this.loginService.saveLogin(this.getLoginRequestFromForm())
+    .catch(err => {
+      console.warn(err);
+      this.message = err.message;
+    })
 
-    
-    await this.httpService.sayHi(login)
+    await this.httpService.sayHi(this.loginService.getLogin())
     .then(promise => {
       this.message = promise.message;
     }).catch(err => {
@@ -61,8 +54,17 @@ export class LoginComponent implements OnInit {
     });
   }
 
+  public logout(): void {
+    // this.resetListOfStudents();
+    this.message = this.loginService.logout();
+  }
+
+  public isLoggedIn(): boolean {
+    return this.loginService.getStatus();
+  }
+
   public async registerUser() {
-    await this.httpService.registerUser(this.buildLoginCreds())
+    await this.httpService.registerUser(this.loginService.getLogin())
     .then(promise => {
       this.message = promise.message;
     }).catch(err => {
@@ -73,7 +75,7 @@ export class LoginComponent implements OnInit {
 
   public async changePassword() {
     await this.httpService.changePassword(
-          this.buildLoginCreds(),
+          this.loginService.getLogin(),
           this.loginForm.get('new_password')?.value)
     .then(promise => {
       this.message = promise.message;
@@ -83,39 +85,5 @@ export class LoginComponent implements OnInit {
     })
   }
 
-  public async addStudent() {
-    await this.httpService.addNewStudent(this.buildLoginCreds(), this.loginForm.get('nickname')?.value)
-    .then(promise => {
-      this.message = promise.message;
-    }).catch(err => {
-      console.warn(err);
-      this.message = err.message;
-    })
-    this.refreshListOfStudents();
-  }
-
-  public async delStudent() {
-    await this.httpService.delStudent(this.buildLoginCreds(), this.loginForm.get('nickname')?.value)
-    .then(promise => {
-      this.message = promise.message;
-    }).catch(err => {
-      console.warn(err);
-      this.message = err.message;
-    });
-    this.refreshListOfStudents();
-  }
-
-  public async refreshListOfStudents() {
-    await this.httpService.getAllStudents(this.buildLoginCreds())
-    .then(promise => {
-      this.listOfStudents = promise;
-    }).catch(err => {
-      console.warn(err);
-      this.message = err.message;
-    });
-  }
-
-  public getListOfStudent(): Array<string> {
-    return this.listOfStudents;
-  }
+  
 }
