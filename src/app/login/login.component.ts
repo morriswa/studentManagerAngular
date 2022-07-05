@@ -34,9 +34,7 @@ export class LoginComponent implements OnInit {
 
   }
 
-  ngOnInit(): void {
-    throw new Error('Method not implemented.');
-  }
+  ngOnInit(): void { }
 
   public async sayHi() {
     await this.loginService.saveLogin(this.getLoginRequestFromForm())

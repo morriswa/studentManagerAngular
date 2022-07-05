@@ -8,26 +8,12 @@ import { Response,ResponseType,ErrorResponse, CourseResponse } from './interface
   providedIn: 'root'
 })
 export class HttpService {
-  private login: LoginRequest = {
-    "username" : "",
-    "password" : ""
-  }
-
-  public saveLogin(login: LoginRequest) {
-    this.login = login;
-  }
-
-  public getLogin(): LoginRequest {
-    return this.login;
-  }
-
   readonly HTTP_URL: string = 'http://localhost:8080/';
 
   constructor(private http: HttpClient) { }
 
   // POST api/hello >> Response{ string }
-  public async sayHi(login: LoginRequest) { 
-    
+  public async sayHi(login: LoginRequest) {
     let request = {
       "login" : login,
       "data": {
@@ -39,7 +25,6 @@ export class HttpService {
       throw new Error(response.message);
     }
     return response;
-   
   }
 
   // POST user/signup
@@ -54,6 +39,7 @@ export class HttpService {
     return response;
   }
   
+  //PUT user/changepassword
   public async changePassword(login: LoginRequest, new_password: string) {
     let request = {
       "login" : login,
@@ -66,6 +52,7 @@ export class HttpService {
     return response; 
   }
 
+  // POST api/student/add
   public async addNewStudent(login: LoginRequest, nickname: string) {
     let request = {
       "login" : login,
@@ -78,6 +65,7 @@ export class HttpService {
     return response;
   }
 
+  // PUT api/student/del
   public async delStudent(login: LoginRequest, nickname: string) {
     let request = {
       "login" : login,
@@ -90,6 +78,7 @@ export class HttpService {
     return response;
   }
 
+  // PUT api/student/updateinfos
   public async updateStudentInfo( login: LoginRequest, 
                                   nickname: string, 
                                   name_first: string, 
@@ -113,6 +102,7 @@ export class HttpService {
     return response;
   }
 
+  // POST api/student/getall
   public async getAllStudents(login: LoginRequest) {
     let request = {
       "login" : login,
@@ -131,6 +121,7 @@ export class HttpService {
     return returnList.slice(0,-1);
   }
 
+  // POST api/course/all
   public async getAllCourses(login: LoginRequest, nickname: string) {
     let request = {
       "login": login,
@@ -145,6 +136,7 @@ export class HttpService {
     return courseResponse;
   }
  
+  // POST api/course/add
   public async addCourse( login: LoginRequest, nickname: string, year: number, term: string, 
                           title: string, creditHrs: number, gradepoint: number)
   {
@@ -165,6 +157,7 @@ export class HttpService {
     return addCourseResponse;
   }
 
+  // PUT api/course/del
   public async delCourse(login: LoginRequest, nickname: string, id: number) {
     let request = {
       "login": login,
@@ -177,5 +170,19 @@ export class HttpService {
     } 
     let addCourseResponse: Response = response;
     return addCourseResponse;
+  }
+
+  // POST api/student/gpa
+  public async getStudentGradebookStats(login: LoginRequest, nickname: string) {
+    let request = {
+      "login": login,
+      "nickname": nickname
+    }
+    let response: any = await lastValueFrom(this.http.post<Response>(this.HTTP_URL + 'api/student/gpa',request));
+    if (response.exception != null) {
+      throw new Error(response.message);
+    } 
+    let statsResponse: Response = response;
+    return statsResponse.message.split("|");
   }
 }

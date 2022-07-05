@@ -26,12 +26,28 @@
             </mat-action-row>
         </mat-expansion-panel>
 
-        <mat-expansion-panel *ngFor="let student of getListOfStudent()" (opened)="this.pullNewListOfCourses(student)">
+        <mat-expansion-panel *ngFor="let student of getListOfStudent()" (opened)="this.pullNewListOfCourses(student);this.pullNewGradebook(student);">
             <mat-expansion-panel-header>
             <mat-panel-title>{{ student }}</mat-panel-title>
             </mat-expansion-panel-header> 
 
             <!-- <app-course *ngFor="let course of getListOfCourses()" [id]="course.id"></app-course> -->
+            <mat-expansion-panel id="gradebook" (opened)="this.pullNewGradebook(student)">
+                <mat-expansion-panel-header>
+                    <mat-panel-title>Gradebook</mat-panel-title>
+                    <mat-panel-description>GPA: {{ map.get("gpa") }}</mat-panel-description>
+                </mat-expansion-panel-header>
+
+                <mat-list>
+                    <mat-list-item>Credits Earned: {{ map.get("credits") }}</mat-list-item>
+                    <mat-divider></mat-divider>
+                    <mat-list-item>Gradepoints Earned: {{ map.get("gps") }}</mat-list-item>
+                    <mat-divider></mat-divider>
+                    <mat-list-item>Overall GPA of {{ student + " is " + map.get("gpa") }}</mat-list-item> 
+                </mat-list> 
+
+            </mat-expansion-panel>
+
 
             <mat-accordion>
                 <!-- <mat-expansion-panel>
@@ -94,8 +110,23 @@
                 </mat-expansion-panel>
                 <mat-expansion-panel *ngFor="let course of getListOfCourses()">
                     <mat-expansion-panel-header>
-                        <mat-panel-title>{{ course.title + " : " + course.term + " " + course.year }}</mat-panel-title>
+                        <mat-panel-title>{{ course.title + "  ///  " + course.term + " " + course.year }}</mat-panel-title>
+                        <mat-panel-description>{{ getLetterGrade(course) }}</mat-panel-description>
                     </mat-expansion-panel-header> 
+
+                    <mat-list>
+                        <mat-list-item>Semester Taken: {{ course.term + " " + course.year }}</mat-list-item>
+                        <mat-divider></mat-divider>
+                        <mat-list-item>Credit Earned: {{ course.creditHrs }}</mat-list-item>
+                        <mat-divider></mat-divider>
+                        <mat-list-item>Gradepoints Earned: {{ course.creditHrs*course.gradepoint }}</mat-list-item>
+                        <mat-divider></mat-divider>
+                        <mat-list-item>Letter Grade Earned: {{ getLetterGrade(course) }}</mat-list-item> 
+                    </mat-list>
+
+
+
+
 
                     <mat-action-row>
                         <button mat-button color="primary" (click)="delCourse(student,course.id)">Delete Course</button>
