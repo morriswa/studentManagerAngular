@@ -21,16 +21,12 @@
         </mat-action-row>
     </mat-expansion-panel>
 
-    <mat-expansion-panel *ngFor="let student of getListOfStudent()">
+    <mat-expansion-panel *ngFor="let student of getListOfStudent()" (opened)="this.pullNewListOfCourses(student)">
         <mat-expansion-panel-header>
         <mat-panel-title>Student: {{ student }}</mat-panel-title>
         </mat-expansion-panel-header> 
 
-        
-
-
-
-
+        <h1 *ngFor="let course of getListOfCourses()">{{ course.title }}</h1> 
 
     </mat-expansion-panel>
 </mat-accordion>

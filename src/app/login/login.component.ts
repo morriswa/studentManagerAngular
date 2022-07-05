@@ -73,17 +73,7 @@ export class LoginComponent implements OnInit {
     });
   }
 
-  public async changePassword() {
-    await this.httpService.changePassword(
-          this.loginService.getLogin(),
-          this.loginForm.get('new_password')?.value)
-    .then(promise => {
-      this.message = promise.message;
-    }).catch(err => {
-      console.warn(err);
-      this.message = err.message;
-    })
-  }
+  
 
   
 }

@@ -2,6 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { LoginService } from '../login.service';
 import { HttpService } from '../http.service';
 import { FormBuilder, FormGroup } from '@angular/forms';
+import { CourseResponse } from '../interface/response';
+import { Course } from '../interface/course';
 
 @Component({
   selector: 'app-student',
@@ -27,6 +29,7 @@ export class StudentComponent implements OnInit {
     this.studentForm = this.fb.group({
       "nickname" : ""
     })
+
   }
 
   ngOnInit(): void {
@@ -72,4 +75,20 @@ export class StudentComponent implements OnInit {
     return this.listOfStudents;
   }
 
+
+  private courses: Course[] = Array();
+  public async pullNewListOfCourses(nickname: string)
+  {
+    await this.hs.getAllCourses(this.ls.getLogin(),nickname)
+    .then(promise => {
+      this.courses = promise.courses;
+    }).catch(err => {
+      console.warn(err);
+      this.courses = Array();
+    })
+  }
+
+  public getListOfCourses() {
+    return this.courses;
+  }
 }

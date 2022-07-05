@@ -2,7 +2,7 @@ import { HttpClient, HttpResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable,of,lastValueFrom } from 'rxjs';
 import { LoginRequest } from './interface/login-request';
-import { Response,ResponseType,ErrorResponse } from './interface/response';
+import { Response,ResponseType,ErrorResponse, CourseResponse } from './interface/response';
 
 @Injectable({
   providedIn: 'root'
@@ -131,6 +131,20 @@ export class HttpService {
     return returnList.slice(0,-1);
   }
 
+  public async getAllCourses(login: LoginRequest, nickname: string) {
+    let request = {
+      "login": login,
+      "nickname": nickname
+    }
+
+    let response: any = await lastValueFrom(this.http.post<CourseResponse>(this.HTTP_URL + 'api/course/all',request));
+    if (response.exception != null) {
+      throw new Error(response.message);
+    } 
+    let courseResponse: CourseResponse = response;
+    return courseResponse;
+  }
+  
   // getStudentInfo() {
   // }
 }

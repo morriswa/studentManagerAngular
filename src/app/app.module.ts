@@ -14,13 +14,15 @@ import { HttpService } from './http.service';
 import { AppComponent } from './app.component';
 import { LoginComponent } from './login/login.component';
 import { StudentComponent } from './student/student.component';
+import { UserprofileComponent } from './userprofile/userprofile.component';
 
 
 @NgModule({
   declarations: [
     AppComponent,
     LoginComponent,
-    StudentComponent
+    StudentComponent,
+    UserprofileComponent
   ],
   imports: [
     BrowserModule,

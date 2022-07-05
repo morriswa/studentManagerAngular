@@ -1,0 +1,29 @@
+<mat-accordion>
+    <mat-expansion-panel>
+        <mat-expansion-panel-header><mat-panel-title>Change Password</mat-panel-title></mat-expansion-panel-header>
+        
+
+        <form [formGroup]="profileForm" id="loginForm">
+            <mat-form-field appearance="fill">
+                <mat-label>Username</mat-label>
+                <input matInput name="username" formControlName="username">
+            </mat-form-field>
+
+            <mat-form-field appearance="fill">
+                <mat-label>Password</mat-label>
+                <input matInput type="password" name="password" formControlName="password">
+            </mat-form-field>
+
+            <mat-form-field appearance="fill">
+                <mat-label>New Password</mat-label>
+                <input matInput type="password" name="new_password" formControlName="new_password">
+            </mat-form-field>
+        </form>
+        <h2>{{ message }}</h2>
+
+        <mat-action-row>
+            <button mat-raised-button color="primary" (click)="changePassword()">Change Password!</button>
+        </mat-action-row>
+    </mat-expansion-panel>
+    
+</mat-accordion>
