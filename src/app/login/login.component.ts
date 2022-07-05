@@ -64,7 +64,7 @@ export class LoginComponent implements OnInit {
   }
 
   public async registerUser() {
-    await this.httpService.registerUser(this.loginService.getLogin())
+    await this.httpService.registerUser(this.getLoginRequestFromForm())
     .then(promise => {
       this.message = promise.message;
     }).catch(err => {
