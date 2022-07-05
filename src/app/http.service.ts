@@ -124,7 +124,11 @@ export class HttpService {
     if (response.exception != null) {
       throw new Error(response.message);
     }
-    return response.message.split("|")
+    let returnList: Array<string> = response.message.split("|");
+    if (returnList.length <= 1) {
+      return Array("No students found");
+    }
+    return returnList.slice(0,-1);
   }
 
   // getStudentInfo() {

@@ -25,7 +25,7 @@ export class LoginComponent implements OnInit {
 
   public message: string; 
   public loginForm: FormGroup;
-  public listOfStudents: Array<string>; 
+  private listOfStudents: Array<string>; 
 
   constructor(private httpService: HttpService, private fb: FormBuilder) {
     this.message = "";
@@ -115,4 +115,7 @@ export class LoginComponent implements OnInit {
     });
   }
 
+  public getListOfStudent(): Array<string> {
+    return this.listOfStudents;
+  }
 }
