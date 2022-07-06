@@ -1,5 +1,5 @@
 {
-  "name": "studentManagerAngular",
+  "name": "student-manager-angular",
   "version": "1.0.0",
   "scripts": {
     "ng": "ng",
