@@ -2,7 +2,7 @@ import { HttpClient, HttpResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable,of,lastValueFrom } from 'rxjs';
 import { LoginRequest } from './interface/login-request';
-import { Response,ResponseType,ErrorResponse, CourseResponse } from './interface/response';
+import { Response,ResponseType,ErrorResponse, CourseResponse, StudentResponse } from './interface/response';
 
 @Injectable({
   providedIn: 'root'
@@ -80,7 +80,8 @@ export class HttpService {
 
   // PUT api/student/updateinfos
   public async updateStudentInfo( login: LoginRequest, 
-                                  nickname: string, 
+                                  nickname: string,
+                                  // new_nickname: string,
                                   name_first: string, 
                                   name_last: string, 
                                   name_middle: string, 
@@ -90,12 +91,13 @@ export class HttpService {
     let request = {
       "login" : login,
       "nickname" : nickname,
+      // "new_nickname" : new_nickname,
       "name_first" : name_first,
       "name_last" : name_last,
       "name_middle" : name_middle,
       "school_attending" : school_attending,
     }
-    let response: any = await lastValueFrom(this.http.put<Response>(this.HTTP_URL + 'api/student/updateinfos',request));
+    let response: any = await lastValueFrom(this.http.put<Response>(this.HTTP_URL + 'api/student/updateinfo',request));
     if (response.exception != null) {
       throw new Error(response.message);
     }
@@ -184,5 +186,19 @@ export class HttpService {
     } 
     let statsResponse: Response = response;
     return statsResponse.message.split("|");
+  }
+
+  // POST api/student/load
+  public async loadStudent(login:LoginRequest,nickname:string) {
+    let request = {
+      "login" : login,
+      "nickname" : nickname
+    }
+    let response: any = await lastValueFrom(this.http.post<StudentResponse>(this.HTTP_URL + 'api/student/load',request));
+    if (response.exception != null) {
+      throw new Error(response.message);
+    } 
+    let studentUpdate: StudentResponse = response;
+    return studentUpdate;
   }
 }
