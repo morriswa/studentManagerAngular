@@ -9,11 +9,13 @@ import { LoginService } from '../login.service';
   styleUrls: ['./userprofile.component.css']
 })
 export class UserprofileComponent implements OnInit {
-
-
-  profileForm: FormGroup;
+  //PUBLIC
   public message: string;
 
+  public profileForm: FormGroup;
+  
+
+  // INIT
   constructor(private hs: HttpService, private ls: LoginService, private fb: FormBuilder) { 
     this.message = "";
     this.profileForm = this.fb.group({
@@ -24,18 +26,14 @@ export class UserprofileComponent implements OnInit {
     })
   }
 
-  ngOnInit(): void {
-  }
+  ngOnInit(): void { }
 
-  // isLoggedIn():boolean{
-  //   return this.ls.getStatus();
-  // }
 
+  // ONCLICK
   public async changePassword() {
-    await this.hs.changePassword(
-          this.ls.getLogin(),
-          this.profileForm.get('new_password')?.value)
+    await this.hs.changePassword(this.ls.getLogin(),this.profileForm.get('new_password')?.value)
     .then(promise => {
+      this.profileForm.reset();
       this.message = promise.message;
     }).catch(err => {
       console.warn(err);

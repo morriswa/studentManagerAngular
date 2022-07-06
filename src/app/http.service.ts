@@ -1,16 +1,20 @@
-import { HttpClient, HttpResponse } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable,of,lastValueFrom } from 'rxjs';
+import { lastValueFrom } from 'rxjs';
 import { LoginRequest } from './interface/login-request';
-import { Response,ResponseType,ErrorResponse, CourseResponse, StudentResponse } from './interface/response';
+import { Response,CourseResponse, StudentResponse } from './interface/response';
 
 @Injectable({
   providedIn: 'root'
 })
 export class HttpService {
+  // CONST
   readonly HTTP_URL: string = 'http://localhost:8080/';
 
+
+  // INIT
   constructor(private http: HttpClient) { }
+
 
   // POST api/hello >> Response{ string }
   public async sayHi(login: LoginRequest) {
@@ -78,7 +82,7 @@ export class HttpService {
     return response;
   }
 
-  // PUT api/student/updateinfos
+  // PUT api/student/updateinfo
   public async updateStudentInfo( login: LoginRequest, 
                                   nickname: string,
                                   // new_nickname: string,
@@ -121,6 +125,20 @@ export class HttpService {
       return Array("No students found");
     }
     return returnList.slice(0,-1);
+  }
+
+  // POST api/student/load
+  public async loadStudent(login:LoginRequest,nickname:string) {
+    let request = {
+      "login" : login,
+      "nickname" : nickname
+    }
+    let response: any = await lastValueFrom(this.http.post<StudentResponse>(this.HTTP_URL + 'api/student/load',request));
+    if (response.exception != null) {
+      throw new Error(response.message);
+    } 
+    let studentUpdate: StudentResponse = response;
+    return studentUpdate;
   }
 
   // POST api/course/all
@@ -174,31 +192,4 @@ export class HttpService {
     return addCourseResponse;
   }
 
-  // POST api/student/gpa
-  public async getStudentGradebookStats(login: LoginRequest, nickname: string) {
-    let request = {
-      "login": login,
-      "nickname": nickname
-    }
-    let response: any = await lastValueFrom(this.http.post<Response>(this.HTTP_URL + 'api/student/gpa',request));
-    if (response.exception != null) {
-      throw new Error(response.message);
-    } 
-    let statsResponse: Response = response;
-    return statsResponse.message.split("|");
-  }
-
-  // POST api/student/load
-  public async loadStudent(login:LoginRequest,nickname:string) {
-    let request = {
-      "login" : login,
-      "nickname" : nickname
-    }
-    let response: any = await lastValueFrom(this.http.post<StudentResponse>(this.HTTP_URL + 'api/student/load',request));
-    if (response.exception != null) {
-      throw new Error(response.message);
-    } 
-    let studentUpdate: StudentResponse = response;
-    return studentUpdate;
-  }
 }

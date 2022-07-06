@@ -11,20 +11,20 @@
     <form [formGroup]="loginForm" id="loginForm">
         <mat-form-field appearance="outline">
             <mat-label>Username</mat-label>
-            <input matInput name="username" formControlName="username">
+            <input matInput required name="username" formControlName="username">
         </mat-form-field>
         
         <mat-form-field appearance="outline">
             <mat-label>Password</mat-label>
-            <input matInput type="password" name="password" formControlName="password">
+            <input matInput required type="password" name="password" formControlName="password">
         </mat-form-field>
     </form>
 
     
 
     <mat-action-row>
-        <button mat-button position="left" color="primary" (click)="registerUser()">Create account</button>
-        <button mat-raised-button color="primary" (click)="sayHi()">Login!</button>
-        <button mat-raised-button color="primary" (click)="logout()">Logout!</button>
+        <button mat-button position="left" color="primary" (click)="registerUser()" [disabled]="!loginForm.valid">Create account</button>
+        <button mat-raised-button color="primary" (click)="sayHi()" [disabled]="!loginForm.valid">Login!</button>
+        <button mat-raised-button color="primary" (click)="logout()" *ngIf="this.isLoggedIn()">Logout!</button>
     </mat-action-row>
 </mat-expansion-panel>
