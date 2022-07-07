@@ -72,6 +72,7 @@ export class LoginComponent implements OnInit {
   public async registerUser(): Promise<void> {
     await this.httpService.registerUser(this.getLoginRequestFromForm())
     .then(promise => {
+      this.sayHi();
       this.loginForm.setValue({
         "username" : this.loginService.getLogin().username,
         "password" : ""

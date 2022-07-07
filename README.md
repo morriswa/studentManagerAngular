@@ -1,4 +1,7 @@
 # DemoApp
+docker run -p5432:5432 --name postgresql -e POSTGRES_PASSWORD=password postgres:latest
+docker run -p8080:8080 studentManagerService
+docker run -p4200:80 studentManagerAngular
 
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 14.0.0.
 
