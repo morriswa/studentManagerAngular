@@ -9,7 +9,7 @@ import { Response,CourseResponse, StudentResponse } from './interface/response';
 })
 export class HttpService {
   // CONST
-  readonly HTTP_URL: string = 'http://localhost:8080/';
+  readonly HTTP_URL: string = 'https://student-manager-api.f2iq9gqbr52r0.us-east-2.cs.amazonlightsail.com:8080/';
 
 
   // INIT
