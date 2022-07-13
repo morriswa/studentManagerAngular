@@ -1,10 +1,10 @@
-<mat-expansion-panel id="studentPanel">
+<mat-expansion-panel id="studentPanel" (opened)="refreshListOfStudents()">
     <mat-expansion-panel-header>
         <mat-panel-title>Your Student Profiles</mat-panel-title>
     </mat-expansion-panel-header>
 
     <mat-accordion>
-        <mat-expansion-panel>
+        <mat-expansion-panel >
             <mat-expansion-panel-header>
                 <mat-panel-title>Profiles:</mat-panel-title>
                 <mat-panel-description>Profile Editor</mat-panel-description>
@@ -25,80 +25,32 @@
             </mat-action-row>
         </mat-expansion-panel>
 
-        <mat-expansion-panel *ngFor="let student of getListOfStudent()" (opened)="this.loadStudent(student)">
+        <mat-expansion-panel *ngFor="let nickname of getListOfStudent()" (opened)="this.loadStudent(nickname)">
             <mat-expansion-panel-header>
-            <mat-panel-title>{{ student }}</mat-panel-title>
+            <mat-panel-title>{{ nickname }}</mat-panel-title>
             <!-- <mat-panel-description>{{ studentInfo.student.name_first + " " + studentInfo.student.name_last }}</mat-panel-description> -->
             </mat-expansion-panel-header> 
 
-            <mat-expansion-panel id="profile" (opened)="this.loadStudent(student)">
-                <mat-expansion-panel-header>
-                    <mat-panel-title>Student Info</mat-panel-title>
-                    <mat-panel-description>School: {{ studentInfo.student.school_attending }}</mat-panel-description>
-                </mat-expansion-panel-header>
+            <h1>Nice to meet you {{ nickname }}</h1>
 
-                <mat-list>
-                    <mat-list-item>Full Name: {{ studentInfo.student.name_first + " " + studentInfo.student.name_middle + " " + studentInfo.student.name_last }}</mat-list-item>
-                    <mat-divider></mat-divider>
-                    <mat-list-item>School Attending: {{ studentInfo.student.school_attending }}</mat-list-item>
-                </mat-list> 
-
-                    <form [formGroup]="studentForm" id="profileEditor" *ngIf="this.isEditProfileMode()">
-                         
-                        <mat-form-field appearance="outline">
-                            <mat-label>First Name</mat-label>
-                            <input matInput type="text" name="name_first" formControlName="name_first">
-                        </mat-form-field>
-                        <mat-form-field appearance="outline">
-                            <mat-label>Middle Name</mat-label>
-                            <input matInput type="text" name="name_middle" formControlName="name_middle">
-                        </mat-form-field>
-                        <mat-form-field appearance="outline">
-                            <mat-label>Last Name</mat-label>
-                            <input matInput type="text" name="name_last" formControlName="name_last">
-                        </mat-form-field>
-                        <mat-divider></mat-divider>
-                        <mat-form-field appearance="outline">
-                            <mat-label>School</mat-label>
-                            <input matInput type="text" name="school_attending" formControlName="school_attending">
-                        </mat-form-field>
-        
-                        <mat-action-row>
-                            <button mat-button color="primary" (click)="this.toggleEditProfileMode()">Discard Changes</button>
-                            <button mat-raised-button color="primary" (click)="this.saveEditProfile(student)">Save Changes</button>
-                        </mat-action-row>
-                    </form> 
-
-                    <h3>{{message}}</h3>
-                <mat-action-row>
-                    <button mat-raised-button color="primary" (click)="this.toggleEditProfileMode()">Edit</button>
-                </mat-action-row>
-            </mat-expansion-panel>
-
-            <mat-expansion-panel id="gradebook" (opened)="this.loadStudent(student)">
+            <mat-expansion-panel id="gradebook" (opened)="this.loadStudent(nickname)">
                 <mat-expansion-panel-header>
                     <mat-panel-title>Gradebook</mat-panel-title>
-                    <mat-panel-description>GPA: {{ studentInfo.gpa }}</mat-panel-description>
+                    <mat-panel-description>GPA: {{ calculateGPA(nickname) }}</mat-panel-description>
                 </mat-expansion-panel-header>
 
                 <mat-list>
-                    <mat-list-item>Credits Earned: {{ studentInfo.creditHrs }}</mat-list-item>
+                    <mat-list-item>Credits Earned: {{ calculateCreditHrs(nickname) }}</mat-list-item>
                     <mat-divider></mat-divider>
-                    <mat-list-item>Gradepoints Earned: {{ studentInfo.gradepoints }}</mat-list-item>
+                    <mat-list-item>Gradepoints Earned: {{ calculateGradepoints(nickname) }}</mat-list-item>
                     <mat-divider></mat-divider>
-                    <mat-list-item>Overall GPA of {{ student + " is " + studentInfo.gpa }}</mat-list-item> 
+                    <mat-list-item>Overall GPA of {{ nickname + " is " + calculateGPA(nickname) }}</mat-list-item> 
                 </mat-list> 
 
             </mat-expansion-panel>
 
-
             <mat-accordion>
-                <!-- <mat-expansion-panel>
-                    <mat-expansion-panel-header>
-                        <mat-panel-title>View Gradebook</mat-panel-title>
-                        <mat-panel-description>{{ getOverallGPA(st) }}</mat-panel-description>
-                    </mat-expansion-panel-header> 
-                </mat-expansion-panel> -->
+               
                 <mat-expansion-panel>
                     <mat-expansion-panel-header>
                         <mat-panel-title>Add Course!</mat-panel-title>
@@ -149,7 +101,7 @@
                     <h3>{{ message }}</h3>
 
                     <mat-action-row>
-                        <button mat-raised-button [disabled]="!courseForm.valid" color="primary" (click)="addCourse(student)">Add Course!</button>
+                        <button mat-raised-button [disabled]="!courseForm.valid" color="primary" (click)="addCourse(nickname)">Add Course!</button>
                     </mat-action-row>      
                 </mat-expansion-panel>
 
@@ -174,7 +126,7 @@
 
 
                     <mat-action-row>
-                        <button mat-button color="primary" (click)="delCourse(student,course.id)">Delete Course</button>
+                        <button mat-button color="primary" (click)="delCourse(nickname,course.id)">Delete Course</button>
                     </mat-action-row> 
                     
                 </mat-expansion-panel>

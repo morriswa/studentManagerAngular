@@ -1,167 +1,103 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { AuthService, User } from '@auth0/auth0-angular';
 import { lastValueFrom } from 'rxjs';
-import { LoginRequest } from './interface/login-request';
-import { Response,CourseResponse, StudentResponse } from './interface/response';
+import { Course } from './interface/course';
+import { Student } from './interface/student';
 
 @Injectable({
   providedIn: 'root'
 })
-export class HttpService {
+export class HttpService {  
   // CONST
-  readonly HTTP_URL: string = 'https://api.student-manager.morriswa.org/';
+  readonly HTTP_URL: string = 'http://localhost:8080/';
 
 
   // INIT
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient, private auth0: AuthService) { }
 
 
-  // POST api/hello >> Response{ string }
-  public async sayHi(login: LoginRequest) {
-    let request = {
-      "login" : login,
-      "data": {
-        "message" : "nothing to report"
+  // POST api/v2/login
+  public async v2login() {
+    // let token: string = "Bearer "
+    // await lastValueFrom(this.auth0.getAccessTokenSilently()).then(promise => {
+    //   token += promise;
+    // })
+    // console.log(token);
+    let response: string = "";
+    await lastValueFrom(this.http.post<string>(this.HTTP_URL + 'api/v2/login',{}))
+    .then(promisedResponse => {
+      console.log(promisedResponse);
+      response = promisedResponse;
+    }).catch(err => {
+      console.error(err);
+      response = err;
+    })
+    return response;
+  }
+
+  // GET api/v2/student/all
+  public async v2studentGetAll() {
+    return await lastValueFrom(this.http.get<Map<string, Student>>(this.HTTP_URL + 'api/v2/student/all'));
+  }
+
+  // GET api/v2/student/load
+  public async v2studentLoad(nick: string) {
+    let response: Course[] = new Array()
+    await lastValueFrom(this.http.get<Array<Course>>(this.HTTP_URL + 'api/v2/student/load',{
+      "params" : {
+        "nick" : nick
       }
-    }
-    let response: any = await lastValueFrom(this.http.post(this.HTTP_URL + 'api/hello',request));
-    if (response.exception != null) {
-      throw new Error(response.message);
-    }
-    return response;
-  }
-
-  // POST user/signup
-  public async registerUser(newUserRequest: LoginRequest) {
-    let request = {
-      "login" : newUserRequest
-    }
-    let response: any = await lastValueFrom(this.http.post<Response>(this.HTTP_URL + 'user/signup',request));
-    if (response.exception != null) {
-      throw new Error(response.message);
-    }
-    return response;
-  }
-  
-  //PUT user/changepassword
-  public async changePassword(login: LoginRequest, new_password: string) {
-    let request = {
-      "login" : login,
-      "new_password" : new_password
-    }
-    let response: any = await lastValueFrom(this.http.put<Response>(this.HTTP_URL + 'user/changepassword',request));
-    if (response.exception != null) {
-      throw new Error(response.message);
-    }
+    }))
+    .then(promise => {
+      console.log(promise);
+      response = promise;
+    }).catch(err => {
+      console.error(err);
+    })
     return response; 
   }
 
-  // POST api/student/add
-  public async addNewStudent(login: LoginRequest, nickname: string) {
-    let request = {
-      "login" : login,
-      "nickname" : nickname
-    }
-    let response: any = await lastValueFrom(this.http.post<Response>(this.HTTP_URL + 'api/student/add',request));
-    if (response.exception != null) {
-      throw new Error(response.message);
-    }
-    return response;
-  }
-
-  // PUT api/student/del
-  public async delStudent(login: LoginRequest, nickname: string) {
-    let request = {
-      "login" : login,
-      "nickname" : nickname
-    }
-    let response: any = await lastValueFrom(this.http.put<Response>(this.HTTP_URL + 'api/student/del',request));
-    if (response.exception != null) {
-      throw new Error(response.message);
-    } 
-    return response;
-  }
-
-  // PUT api/student/updateinfo
-  public async updateStudentInfo( login: LoginRequest, 
-                                  nickname: string,
-                                  // new_nickname: string,
-                                  name_first: string, 
-                                  name_last: string, 
-                                  name_middle: string, 
-                                  school_attending: string)
-  {
-    
-    let request = {
-      "login" : login,
-      "nickname" : nickname,
-      // "new_nickname" : new_nickname,
-      "name_first" : name_first,
-      "name_last" : name_last,
-      "name_middle" : name_middle,
-      "school_attending" : school_attending,
-    }
-    let response: any = await lastValueFrom(this.http.put<Response>(this.HTTP_URL + 'api/student/updateinfo',request));
-    if (response.exception != null) {
-      throw new Error(response.message);
-    }
-    return response;
-  }
-
-  // POST api/student/getall
-  public async getAllStudents(login: LoginRequest) {
-    let request = {
-      "login" : login,
-      "data" : {
-        "message" : "nothing to report :("
+  // DELETE api/v2/student/del
+  public async v2studentDel(delStudent: string) {
+    let response: Map<string, Student> = new Map();
+    await lastValueFrom(this.http.delete<Map<string, Student>>(this.HTTP_URL + 'api/v2/student/del',{
+      "params" : {
+        "nick" : delStudent
       }
-    }
-    let response: any = await lastValueFrom(this.http.post<Response>(this.HTTP_URL + 'api/student/getall',request));
-    if (response.exception != null) {
-      throw new Error(response.message);
-    }
-    let returnList: Array<string> = response.message.split("|");
-    if (returnList.length <= 1) {
-      return Array("No students found");
-    }
-    return returnList.slice(0,-1);
+    }))
+    .then(promise => {
+      console.log(promise);
+      response = promise;
+    }).catch(err => {
+      console.error(err);
+      response = err;
+    })
+    return response;
   }
 
-  // POST api/student/load
-  public async loadStudent(login:LoginRequest,nickname:string) {
-    let request = {
-      "login" : login,
-      "nickname" : nickname
-    }
-    let response: any = await lastValueFrom(this.http.post<StudentResponse>(this.HTTP_URL + 'api/student/load',request));
-    if (response.exception != null) {
-      throw new Error(response.message);
-    } 
-    let studentUpdate: StudentResponse = response;
-    return studentUpdate;
+  // POST api/v2/student/add
+  public async v2studentAdd(newStudent: string) {
+    let response: Map<string, Student> = new Map();
+    await lastValueFrom(this.http.post<Map<string, Student>>(this.HTTP_URL + 'api/v2/student/add',{},{
+      "params" : {
+        "nick" : newStudent
+      }
+    }))
+    .then(promise => {
+      console.log(promise);
+      response = promise;
+    }).catch(err => {
+      console.error(err);
+      response = err;
+    })
+    return response; 
   }
-
-  // POST api/course/all
-  public async getAllCourses(login: LoginRequest, nickname: string) {
+  
+  // POST api/v2/course/add
+  public async v2courseAdd(nickname: string, year: number, term: string, 
+              title: string, creditHrs: number, gradepoint: number) {
     let request = {
-      "login": login,
-      "nickname": nickname
-    }
-
-    let response: any = await lastValueFrom(this.http.post<CourseResponse>(this.HTTP_URL + 'api/course/all',request));
-    if (response.exception != null) {
-      throw new Error(response.message);
-    } 
-    let courseResponse: CourseResponse = response;
-    return courseResponse;
-  }
- 
-  // POST api/course/add
-  public async addCourse( login: LoginRequest, nickname: string, year: number, term: string, 
-                          title: string, creditHrs: number, gradepoint: number)
-  {
-    let request = {
-      "login": login,
       "nickname": nickname,
       "year" : year,
       "term" : term,
@@ -169,27 +105,57 @@ export class HttpService {
       "creditHrs" : creditHrs,
       "gradepoint" : gradepoint
     } 
-    let response: any = await lastValueFrom(this.http.post<Response>(this.HTTP_URL + 'api/course/add',request));
-    if (response.exception != null) {
-      throw new Error(response.message);
-    } 
-    let addCourseResponse: Response = response;
-    return addCourseResponse;
+    let response: Course[] = new Array();
+    await lastValueFrom(this.http.post<Array<Course>>(this.HTTP_URL + 'api/v2/course/add',request)).then(promise => {
+      response = promise;
+    }).catch(err => {
+      console.warn(err);
+    })
+    return response;
   }
 
-  // PUT api/course/del
-  public async delCourse(login: LoginRequest, nickname: string, id: number) {
+  // PATCH api/v2/course/del
+  public async v2courseDel(nickname: string, id: number) {
     let request = {
-      "login": login,
       "nickname": nickname,
       "id" : id
     } 
-    let response: any = await lastValueFrom(this.http.put<Response>(this.HTTP_URL + 'api/course/del',request));
-    if (response.exception != null) {
-      throw new Error(response.message);
-    } 
-    let addCourseResponse: Response = response;
-    return addCourseResponse;
+    let response: Course[] = new Array();
+    await lastValueFrom(this.http.patch<Array<Course>>(this.HTTP_URL + 'api/v2/course/del',request)).then(promise => {
+      response = promise;
+    }).catch(err => {
+      console.warn(err);
+    })
+    return response;
   }
+
+
+  // DEV 
+  /*
+   // // PUT api/student/updateinfo
+  // public async updateStudentInfo( 
+  //                                 nickname: string,
+  //                                 // new_nickname: string,
+  //                                 name_first: string, 
+  //                                 name_last: string, 
+  //                                 name_middle: string, 
+  //                                 school_attending: string)
+  // {
+    
+  //   let request = {
+  //     "nickname" : nickname,
+  //     // "new_nickname" : new_nickname,
+  //     "name_first" : name_first,
+  //     "name_last" : name_last,
+  //     "name_middle" : name_middle,
+  //     "school_attending" : school_attending,
+  //   }
+  //   let response: any = await lastValueFrom(this.http.put<Response>(this.HTTP_URL + 'api/student/updateinfo',request));
+  //   if (response.exception != null) {
+  //     throw new Error(response.message);
+  //   }
+  //   return response;
+  // }  
+  */
 
 }

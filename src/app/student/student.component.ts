@@ -1,9 +1,10 @@
 import { Component, OnInit } from '@angular/core';
-import { LoginService } from '../login.service';
 import { HttpService } from '../http.service';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { Course } from '../interface/course';
 import { ResponseType, StudentResponse } from '../interface/response';
+import { AuthService } from '@auth0/auth0-angular';
+import { Student } from '../interface/student';
 
 @Component({
   selector: 'app-student',
@@ -26,12 +27,46 @@ export class StudentComponent implements OnInit {
   // PRIVATE
   private editProfileMode: boolean;
 
-  private listOfStudents: Array<string> = Array("Not init :("); 
+  private students: Map<string,Student> = new Map();
   private courses: Course[] = Array();
 
 
+  // MATH 
+  public calculateGPA(nickname: string) {
+    let gradepoints = 0;
+    let creditHrs = 0;
+
+    this.courses.forEach(course => {
+      gradepoints += (course.gradepoint*course.creditHrs);
+      creditHrs += course.creditHrs;
+    })
+
+    return ((gradepoints / creditHrs).toFixed(2));
+  }
+
+  public calculateCreditHrs(nickname: string): number {
+    let creditHrs = 0;
+
+    this.courses.forEach(course => {
+      creditHrs += course.creditHrs
+    }) 
+
+    return creditHrs;
+  }
+
+  public calculateGradepoints(nickname: string): number {
+    let gradepoints = 0;
+
+    this.courses.forEach(course => {
+      gradepoints += (course.gradepoint*course.creditHrs);
+    }) 
+
+    return gradepoints;
+  }
+
+
   // INIT
-  constructor(private hs: HttpService, private ls: LoginService, private fb: FormBuilder) {
+  constructor(private hs: HttpService, private auth0: AuthService, private fb: FormBuilder) {
     this.message = "";
     
     this.studentForm = this.fb.group({
@@ -73,19 +108,17 @@ export class StudentComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.hs.getAllStudents(this.ls.getLogin()).then(promise => {
-      this.listOfStudents = promise;
-    }).catch(err => {
-      this.listOfStudents = Array("Please log in");
-    });
-
-    this.editProfileMode = false;
+    this.refreshListOfStudents();
   }
 
 
   // GETTER SETTER
-  public getListOfStudent(): Array<string> {
-    return this.listOfStudents;
+  public getListOfStudent(): string[] {
+    let returnArray: string[] = new Array();
+    for (let key in this.students) {
+        returnArray.push(key);
+    }
+    return returnArray;
   }
 
   public getListOfCourses(): Array<Course> {
@@ -135,46 +168,32 @@ export class StudentComponent implements OnInit {
     
   }
 
-  public getGPAofStudent(student:string): number {
-    this.loadStudent(student);
-    return this.studentInfo.gpa;
-  }
-
-  public isEditProfileMode(): boolean {
-    return this.editProfileMode;
-  }
-
 
   // ONCLICK 
   public async addStudent() {
-    let newStudent: string = this.studentForm.get('nickname')?.value;
-    await this.hs.addNewStudent(this.ls.getLogin(), newStudent)
+    await this.hs.v2studentAdd(this.studentForm.get('nickname')?.value)
     .then(promise => {
       this.studentForm.reset();
-      this.message = promise.message;
-      this.loadStudent(newStudent);
+      this.students = promise;
     }).catch(err => {
       console.warn(err);
       this.message = err.message;
     })
-    this.refreshListOfStudents();
   }
 
   public async delStudent() {
-    await this.hs.delStudent(this.ls.getLogin(), this.studentForm.get('nickname')?.value)
+    await this.hs.v2studentDel(this.studentForm.get('nickname')?.value)
     .then(promise => {
       this.studentForm.reset();
-      this.message = promise.message;
+      this.students = promise;
     }).catch(err => {
       console.warn(err);
       this.message = err.message;
     });
-    this.refreshListOfStudents();
   }
 
   public async addCourse(nickname: string) {
-    await this.hs.addCourse(
-      this.ls.getLogin(),
+    await this.hs.v2courseAdd(
       nickname,
       this.courseForm.get('year')?.value,
       this.courseForm.get('term')?.value,
@@ -183,7 +202,7 @@ export class StudentComponent implements OnInit {
       this.courseForm.get('gradepoint')?.value,
     ).then(promise => {
       this.courseForm.reset();
-      this.message = promise.message;
+      this.courses = promise;
       this.loadStudent(nickname);
     }).catch(err => {
       console.warn(err);
@@ -192,116 +211,67 @@ export class StudentComponent implements OnInit {
     })
   }
 
-  public async delCourse(nickname: string, id: number) {
-    await this.hs.delCourse(
-      this.ls.getLogin(),
+  public async delCourse(nickname: string,id: number) {
+    await this.hs.v2courseDel(
       nickname,
       id
     ).then(promise => {
+      this.courseForm.reset();
+      this.courses = promise;
       this.loadStudent(nickname);
     }).catch(err => {
       console.warn(err);
       this.message = err.message;
+      this.loadStudent(nickname);
     })
-    this.loadStudent(nickname);
-  }
-
-  public async saveEditProfile(nickname:string) {
-    await this.hs.updateStudentInfo(
-      this.ls.getLogin(),
-      nickname,
-      // this.studentForm.get('nickname')?.value,
-      this.studentForm.get('name_first')?.value,
-      this.studentForm.get('name_last')?.value,
-      this.studentForm.get('name_middle')?.value,
-      this.studentForm.get('school_attending')?.value,
-    ).then(promise => {
-      this.toggleEditProfileMode();
-      this.studentForm.reset();
-      this.loadStudent(nickname)
-      this.message = promise.message;
-    }).catch(err => {
-      this.toggleEditProfileMode();
-      console.warn(err);
-      this.message = err.message;
-    })
-
   }
 
 
-  // HELPERS
-  public async refreshListOfStudents(): Promise<void> {
-    await this.hs.getAllStudents(this.ls.getLogin())
-    .then(promise => {
-      this.listOfStudents = promise;
-    }).catch(err => {
-      console.warn(err);
-      this.resetListOfStudents();
-      // this.message = err.message;
-    });
+//   public async saveEditProfile(nickname:string) {
+//     await this.hs.updateStudentInfo(
+//       nickname,
+//       // this.studentForm.get('nickname')?.value,
+//       this.studentForm.get('name_first')?.value,
+//       this.studentForm.get('name_last')?.value,
+//       this.studentForm.get('name_middle')?.value,
+//       this.studentForm.get('school_attending')?.value,
+//     ).then(promise => {
+//       this.toggleEditProfileMode();
+//       this.studentForm.reset();
+//       this.loadStudent(nickname)
+//       this.message = promise.message;
+//     }).catch(err => {
+//       this.toggleEditProfileMode();
+//       console.warn(err);
+//       this.message = err.message;
+//     })
+
+//   }
+
+
+//   // HELPERS
+  
+  public async refreshListOfStudents() {
+    this.students = await this.hs.v2studentGetAll();
   }
 
   public resetListOfStudents(): void {
-    this.listOfStudents = Array<string>("Please log in");
+    this.students = new Map();
   }
 
-  public toggleEditProfileMode(): void {
-    this.editProfileMode = !this.editProfileMode;
-    // return this.editProfileMode;
-  }
+//   public toggleEditProfileMode(): void {
+//     this.editProfileMode = !this.editProfileMode;
+//     // return this.editProfileMode;
+//   }
 
-  public async loadStudent(student: string): Promise<void> {
-    await this.hs.loadStudent(this.ls.getLogin(),student)
+  public async loadStudent(nick: string) {
+    await this.hs.v2studentLoad(nick)
     .then(promise => {
-      this.studentInfo = promise;
-      this.courses = promise.courses;
+      this.courses = promise;
     }).catch(err => {
       console.warn(err);
-      this.studentInfo = {
-        "status" : ResponseType.OK,
-        "message" : "not initialized",
-        "student" : {
-          "id" : 0,
-          "name_first" : "",
-          "name_last" : "",
-          "name_middle" : "",
-          "nickname" : "",
-          "school_attending" : "",
-          "user" : JSON
-        },
-        "courses" : [],
-        "creditHrs" : 0,
-        "gpa" : 0.0,
-        "gradepoints" : 0.0
-      }
-      this.message = err.message;
-      this.courses = Array();
-    });
-  }
-
-
-  // DEV JUNK
-  /* public async pullNewListOfCourses(nickname: string)
-  {
-    await this.hs.loadStudent(this.ls.getLogin(),nickname)
-    .then(promise => {
-      this.courses = promise.courses;
-    }).catch(err => {
-      console.warn(err);
-      this.courses = Array();
+      this.courses = new Array();
     })
-  } */
-
-  /* public async pullNewGradebook(student: string) {
-    await this.hs.getStudentGradebookStats(this.ls.getLogin(),student)
-    .then(promise => {
-      this.map.set("gpa",promise[0]);
-      this.map.set("credits",promise[1]);
-      this.map.set("gps",promise[2]);
-    }).catch(err => {
-      console.warn(err);
-      this.message = err.message
-    });
-  } */
+  }
 
 }

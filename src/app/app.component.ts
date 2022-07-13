@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { LoginService } from './login.service';
+import { AuthService } from '@auth0/auth0-angular';
 
 @Component({
   selector: 'app-root',
@@ -8,8 +8,20 @@ import { LoginService } from './login.service';
 })
 export class AppComponent {
   title = 'demo-app';
-  constructor(private ls:LoginService){}
-  isLoggedIn():boolean {
-    return this.ls.getStatus();
+  private loginStatus: boolean = false;
+
+  constructor(private auth0: AuthService){
+    this.loginChecker();
+  }
+
+  public isLoggedIn(): boolean {
+    return this.loginStatus;
+  }
+
+  private async loginChecker() {
+    this.auth0.isAuthenticated$.subscribe(bool => {
+      this.loginStatus = bool;
+    })
   }
 }
+
