@@ -38,7 +38,14 @@ export class HttpService {
 
   // GET api/v2/student/all
   public async v2studentGetAll() {
-    return await lastValueFrom(this.http.get<Map<string, Student>>(this.HTTP_URL + 'api/v2/student/all'));
+    let responseMap:Map<string, Student> = new Map(); 
+    await lastValueFrom(this.http.get<Map<string, Student>>(this.HTTP_URL + 'api/v2/student/all'))
+    .then(response => {
+      responseMap = Object.assign(responseMap,response);
+    }).catch(err => {
+      console.error(err);
+    });
+    return responseMap
   }
 
   // GET api/v2/student/load
@@ -68,7 +75,7 @@ export class HttpService {
     }))
     .then(promise => {
       console.log(promise);
-      response = promise;
+      response = Object.assign(response,promise); 
     }).catch(err => {
       console.error(err);
       response = err;
@@ -86,7 +93,7 @@ export class HttpService {
     }))
     .then(promise => {
       console.log(promise);
-      response = promise;
+      response = Object.assign(response,promise); 
     }).catch(err => {
       console.error(err);
       response = err;

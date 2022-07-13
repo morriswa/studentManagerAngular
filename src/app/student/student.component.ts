@@ -18,7 +18,6 @@ export class StudentComponent implements OnInit {
 
   // PUBLIC
   public message: string;
-  public studentInfo: StudentResponse;
 
   public studentForm: FormGroup;
   public courseForm: FormGroup;
@@ -27,7 +26,11 @@ export class StudentComponent implements OnInit {
   // PRIVATE
   private editProfileMode: boolean;
 
+  public listOfStudents: string[] = new Array();
   private students: Map<string,Student> = new Map();
+  public getStudent(nick: string) {
+    return this.students.get(nick);
+  }
   private courses: Course[] = Array();
 
 
@@ -85,24 +88,6 @@ export class StudentComponent implements OnInit {
       "gradepoint" : ""
     })
 
-    this.studentInfo = {
-      "status" : ResponseType.OK,
-      "message" : "not initialized",
-      "student" : {
-        "id" : 0,
-        "name_first" : "",
-        "name_last" : "",
-        "name_middle" : "",
-        "nickname" : "",
-        "school_attending" : "",
-        "user" : JSON
-      },
-      "courses" : [],
-      "creditHrs" : 0,
-      "gpa" : 0.0,
-      "gradepoints" : 0.0
-    }
-
     this.editProfileMode = false;
 
   }
@@ -114,11 +99,7 @@ export class StudentComponent implements OnInit {
 
   // GETTER SETTER
   public getListOfStudent(): string[] {
-    let returnArray: string[] = new Array();
-    for (let key in this.students) {
-        returnArray.push(key);
-    }
-    return returnArray;
+    return this.listOfStudents;
   }
 
   public getListOfCourses(): Array<Course> {
@@ -175,10 +156,11 @@ export class StudentComponent implements OnInit {
     .then(promise => {
       this.studentForm.reset();
       this.students = promise;
+      this.refreshListOfStudents();
     }).catch(err => {
       console.warn(err);
       this.message = err.message;
-    })
+    });
   }
 
   public async delStudent() {
@@ -186,6 +168,7 @@ export class StudentComponent implements OnInit {
     .then(promise => {
       this.studentForm.reset();
       this.students = promise;
+      this.refreshListOfStudents();
     }).catch(err => {
       console.warn(err);
       this.message = err.message;
@@ -252,11 +235,12 @@ export class StudentComponent implements OnInit {
 //   // HELPERS
   
   public async refreshListOfStudents() {
-    this.students = await this.hs.v2studentGetAll();
+    this.refreshMapOfStudents();
+    this.listOfStudents = Object.keys(this.students);
   }
 
-  public resetListOfStudents(): void {
-    this.students = new Map();
+  public async refreshMapOfStudents() {
+    this.students = Object.assign(this.students,await this.hs.v2studentGetAll());
   }
 
 //   public toggleEditProfileMode(): void {
