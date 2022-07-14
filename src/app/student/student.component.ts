@@ -2,7 +2,6 @@ import { Component, OnInit } from '@angular/core';
 import { HttpService } from '../http.service';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { Course } from '../interface/course';
-import { ResponseType, StudentResponse } from '../interface/response';
 import { AuthService } from '@auth0/auth0-angular';
 import { Student } from '../interface/student';
 
@@ -226,30 +225,6 @@ export class StudentComponent implements OnInit {
   }
 
 
-//   public async saveEditProfile(nickname:string) {
-//     await this.hs.updateStudentInfo(
-//       nickname,
-//       // this.studentForm.get('nickname')?.value,
-//       this.studentForm.get('name_first')?.value,
-//       this.studentForm.get('name_last')?.value,
-//       this.studentForm.get('name_middle')?.value,
-//       this.studentForm.get('school_attending')?.value,
-//     ).then(promise => {
-//       this.toggleEditProfileMode();
-//       this.studentForm.reset();
-//       this.loadStudent(nickname)
-//       this.message = promise.message;
-//     }).catch(err => {
-//       this.toggleEditProfileMode();
-//       console.warn(err);
-//       this.message = err.message;
-//     })
-
-//   }
-
-
-//   // HELPERS
-  
   public async refreshListOfStudents() {
     await this.refreshMapOfStudents();
     this.listOfStudents = Object.values(this.students);
