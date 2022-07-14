@@ -10,7 +10,7 @@ import { Student } from './interface/student';
 })
 export class HttpService {  
   // CONST
-  readonly HTTP_URL: string = 'http://localhost:8080/';
+  readonly HTTP_URL: string = 'https://api.student-manager.morriswa.org/';
 
 
   // INIT

@@ -15,14 +15,11 @@ import {MatListModule} from '@angular/material/list';
 import { AuthModule } from '@auth0/auth0-angular';
 import { AuthHttpInterceptor } from '@auth0/auth0-angular';
 
-
 import { AppRoutingModule } from './app-routing.module';
 import { HttpService } from './http.service';
 import { AppComponent } from './app.component';
 import { LoginComponent } from './login/login.component';
 import { StudentComponent } from './student/student.component';
-
-import {environment as env } from '../environments/environment';
 
 
 @NgModule({
@@ -52,7 +49,7 @@ import {environment as env } from '../environments/environment';
       clientId: "73UVkM0NOBhxYZOPgntG2Eu0wB6WOA08",
 
       // Request this audience at user authentication time
-      audience: env.auth.audience,
+      audience: "https://api.student-manager.morriswa.org/api/v2/",
 
       // Request this scope at user authentication time
       scope: 'user',
@@ -65,7 +62,7 @@ import {environment as env } from '../environments/environment';
             uri: 'https://api.student-manager.morriswa.org/api/v2/*',
             tokenOptions: {
               // The attached token should target this audience
-              audience: 'https://api.student-manager.morriswa.org/',
+              audience: 'https://api.student-manager.morriswa.org/api/v2/',
 
               // The attached token should have these scopes
               scope: 'user'
