@@ -45,8 +45,8 @@ import { StudentComponent } from './student/student.component';
     MatDividerModule,
     MatListModule,
     AuthModule.forRoot({
-      domain: "dev-9deub659.us.auth0.com",
-      clientId: "73UVkM0NOBhxYZOPgntG2Eu0wB6WOA08",
+      domain: "morriswa-auth-prod.us.auth0.com",
+      clientId: "KB8JodCSOD7w5h9LWhurvAUcXL2K8pYD",
 
       // Request this audience at user authentication time
       audience: "https://api.student-manager.morriswa.org/api/v2/",
