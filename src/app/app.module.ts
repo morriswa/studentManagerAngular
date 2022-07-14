@@ -24,6 +24,7 @@ import { StudentComponent } from './student/student.component';
 
 import {environment as env } from '../environments/environment';
 
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -47,11 +48,11 @@ import {environment as env } from '../environments/environment';
     MatDividerModule,
     MatListModule,
     AuthModule.forRoot({
-      domain: 'dev-9deub659.us.auth0.com',
-      clientId: '73UVkM0NOBhxYZOPgntG2Eu0wB6WOA08',
+      domain: "dev-9deub659.us.auth0.com",
+      clientId: "73UVkM0NOBhxYZOPgntG2Eu0wB6WOA08",
 
       // Request this audience at user authentication time
-      audience: 'http://localhost:8080/',
+      audience: env.auth.audience,
 
       // Request this scope at user authentication time
       scope: 'user',
@@ -61,10 +62,10 @@ import {environment as env } from '../environments/environment';
         allowedList: [
           {
             // Match any request that starts 'https://YOUR_DOMAIN/api/v2/' (note the asterisk)
-            uri: 'http://localhost:8080/api/*',
+            uri: 'https://api.student-manager.morriswa.org/api/v2/*',
             tokenOptions: {
               // The attached token should target this audience
-              audience: 'http://localhost:8080/',
+              audience: 'https://api.student-manager.morriswa.org/',
 
               // The attached token should have these scopes
               scope: 'user'

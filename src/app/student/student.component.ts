@@ -24,13 +24,15 @@ export class StudentComponent implements OnInit {
 
 
   // PRIVATE
+  public getProfileEditMode(): boolean {
+    return this.editProfileMode;
+  }
   private editProfileMode: boolean;
 
-  public listOfStudents: string[] = new Array();
-  private students: Map<string,Student> = new Map();
-  public getStudent(nick: string) {
-    return this.students.get(nick);
-  }
+  public listOfStudents: Student[] = new Array();
+  private students: Map<string,Student>;
+
+  
   private courses: Course[] = Array();
 
 
@@ -89,7 +91,8 @@ export class StudentComponent implements OnInit {
     })
 
     this.editProfileMode = false;
-
+    this.students = new Map();
+  
   }
 
   ngOnInit(): void {
@@ -98,7 +101,7 @@ export class StudentComponent implements OnInit {
 
 
   // GETTER SETTER
-  public getListOfStudent(): string[] {
+  public getListOfStudent(): Student[] {
     return this.listOfStudents;
   }
 
@@ -147,6 +150,19 @@ export class StudentComponent implements OnInit {
       return "?"
     }
     
+  }
+
+  public getProfileNameFirst(student: Student): string {
+    return student.name_first;
+  }
+  public getProfileNameMiddle(student: Student): string {
+    return student.name_middle;
+  }
+  public getProfileNameLast(student: Student): string {
+    return student.name_last;
+  }
+  public getProfileSchoolAttending(student: Student): string {
+    return student.school_attending;
   }
 
 
@@ -235,18 +251,18 @@ export class StudentComponent implements OnInit {
 //   // HELPERS
   
   public async refreshListOfStudents() {
-    this.refreshMapOfStudents();
-    this.listOfStudents = Object.keys(this.students);
+    await this.refreshMapOfStudents();
+    this.listOfStudents = Object.values(this.students);
   }
 
   public async refreshMapOfStudents() {
     this.students = Object.assign(this.students,await this.hs.v2studentGetAll());
   }
 
-//   public toggleEditProfileMode(): void {
-//     this.editProfileMode = !this.editProfileMode;
-//     // return this.editProfileMode;
-//   }
+  public toggleEditProfileMode(): void {
+    this.editProfileMode = !this.editProfileMode;
+    // return this.editProfileMode;
+  }
 
   public async loadStudent(nick: string) {
     await this.hs.v2studentLoad(nick)
@@ -258,4 +274,22 @@ export class StudentComponent implements OnInit {
     })
   }
 
+  public async sendUpdateStudentInfoRequest(nick: string) {
+    await this.hs.v2updsteStudentInfo(
+      nick,
+      this.studentForm.get('name_first')?.value,
+      this.studentForm.get('name_middle')?.value,
+      this.studentForm.get('name_last')?.value,
+      this.studentForm.get('school_attending')?.value,
+    ).then(promise => {
+      this.toggleEditProfileMode();
+      this.studentForm.reset();
+      this.refreshListOfStudents();
+    }).catch(err => {
+      this.toggleEditProfileMode();
+      console.warn(err);
+      this.message = err.message;
+    }) 
+  }
+ 
 }

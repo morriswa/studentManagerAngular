@@ -136,6 +136,21 @@ export class HttpService {
     return response;
   }
 
+  public async v2updsteStudentInfo(nickname: string, name_first: string, name_middle: string, name_last: string, school_attending: string) {
+    let students: Map<string,Student> = new Map();
+    await lastValueFrom(this.http.put<Student>(this.HTTP_URL + 'api/v2/student/info',{
+      "nickname" : nickname,
+      "name_first" : name_first,
+      "name_middle" : name_middle,
+      "name_last" : name_last,
+      "school_attending" : school_attending
+    })).then(promise => {
+      students = Object.assign(students,promise); 
+    }).catch(err => {
+      console.error(err);
+    })
+    return students;
+  }
 
   // DEV 
   /*

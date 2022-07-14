@@ -25,27 +25,28 @@
             </mat-action-row>
         </mat-expansion-panel>
 
-        <mat-expansion-panel *ngFor="let nickname of getListOfStudent()" (opened)="this.loadStudent(nickname)">
+        <mat-expansion-panel *ngFor="let student of getListOfStudent()" (opened)="this.loadStudent(student.nickname);this.refreshMapOfStudents()">
             <mat-expansion-panel-header>
-            <mat-panel-title>{{ nickname }}</mat-panel-title>
+            <mat-panel-title>{{ student.nickname }}</mat-panel-title>
             <!-- <mat-panel-description>{{ studentInfo.student.name_first + " " + studentInfo.student.name_last }}</mat-panel-description> -->
             </mat-expansion-panel-header> 
 
-            <h1>Nice to meet you {{ nickname }}</h1>
+            <h1>Nice to meet you {{ student.nickname }}</h1>
 
+            
             <mat-expansion-panel id="profile">
                 <mat-expansion-panel-header>
                     <mat-panel-title>Student Info</mat-panel-title>
-                    <mat-panel-description>School: {{ this.getStudent(nickname)?.school_attending }}</mat-panel-description>
+                    <mat-panel-description>School: {{ getProfileSchoolAttending(student) }}</mat-panel-description>
                 </mat-expansion-panel-header>
 
                 <mat-list>
-                    <mat-list-item>Full Name: {{ this.getStudent(nickname)?.name_first + " " + this.getStudent(nickname)?.name_middle + " " + this.getStudent(nickname)?.name_last }}</mat-list-item>
+                    <mat-list-item>Full Name: {{ getProfileNameFirst(student) + " " + getProfileNameMiddle(student) + " " + getProfileNameLast(student) }}</mat-list-item>
                     <mat-divider></mat-divider>
-                    <mat-list-item>School Attending: {{ this.getStudent(nickname)?.school_attending }}</mat-list-item>
+                    <mat-list-item>School Attending: {{ getProfileSchoolAttending(student) }}</mat-list-item>
                 </mat-list> 
-<!-- 
-                    <form [formGroup]="studentForm" id="profileEditor" *ngIf="this.isEditProfileMode()">
+
+                    <form [formGroup]="studentForm" id="profileEditor" *ngIf="this.getProfileEditMode()">
                          
                         <mat-form-field appearance="outline">
                             <mat-label>First Name</mat-label>
@@ -67,31 +68,33 @@
         
                         <mat-action-row>
                             <button mat-button color="primary" (click)="this.toggleEditProfileMode()">Discard Changes</button>
-                            <button mat-raised-button color="primary" (click)="this.saveEditProfile(student)">Save Changes</button>
+                            <button mat-raised-button color="primary" (click)="this.sendUpdateStudentInfoRequest(student.nickname)">Save Changes</button>
                         </mat-action-row>
-                    </form>  -->
+                    </form>
 
-                    <!-- <h3>{{message}}</h3>
+                    <h3>{{message}}</h3>
+
                 <mat-action-row>
                     <button mat-raised-button color="primary" (click)="this.toggleEditProfileMode()">Edit</button>
-                </mat-action-row> -->
+                </mat-action-row>
             </mat-expansion-panel>
+            
 
-            <mat-expansion-panel id="gradebook" (opened)="this.loadStudent(nickname)">
+            <mat-expansion-panel id="gradebook" (opened)="this.loadStudent(student.nickname)">
                 <mat-expansion-panel-header>
                     <mat-panel-title>Gradebook</mat-panel-title>
-                    <mat-panel-description>GPA: {{ calculateGPA(nickname) }}</mat-panel-description>
+                    <mat-panel-description>GPA: {{ calculateGPA(student.nickname) }}</mat-panel-description>
                 </mat-expansion-panel-header>
 
                 <mat-list>
-                    <mat-list-item>Credits Earned: {{ calculateCreditHrs(nickname) }}</mat-list-item>
+                    <mat-list-item>Credits Earned: {{ calculateCreditHrs(student.nickname) }}</mat-list-item>
                     <mat-divider></mat-divider>
-                    <mat-list-item>Gradepoints Earned: {{ calculateGradepoints(nickname) }}</mat-list-item>
+                    <mat-list-item>Gradepoints Earned: {{ calculateGradepoints(student.nickname) }}</mat-list-item>
                     <mat-divider></mat-divider>
-                    <mat-list-item>Overall GPA of {{ nickname + " is " + calculateGPA(nickname) }}</mat-list-item> 
+                    <mat-list-item>Overall GPA of {{ student.nickname + " is " + calculateGPA(student.nickname) }}</mat-list-item> 
                 </mat-list> 
 
-            </mat-expansion-panel>
+            </mat-expansion-panel> 
 
             <mat-accordion>
                
@@ -145,7 +148,7 @@
                     <h3>{{ message }}</h3>
 
                     <mat-action-row>
-                        <button mat-raised-button [disabled]="!courseForm.valid" color="primary" (click)="addCourse(nickname)">Add Course!</button>
+                        <button mat-raised-button [disabled]="!courseForm.valid" color="primary" (click)="addCourse(student.nickname)">Add Course!</button>
                     </mat-action-row>      
                 </mat-expansion-panel>
 
@@ -170,7 +173,7 @@
 
 
                     <mat-action-row>
-                        <button mat-button color="primary" (click)="delCourse(nickname,course.id)">Delete Course</button>
+                        <button mat-button color="primary" (click)="delCourse(student.nickname,course.id)">Delete Course</button>
                     </mat-action-row> 
                     
                 </mat-expansion-panel>
