@@ -9,24 +9,29 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatOptionModule } from '@angular/material/core';
-import {MatSelectModule} from '@angular/material/select';
-import {MatDividerModule} from '@angular/material/divider';
-import {MatListModule} from '@angular/material/list';
+import { MatSelectModule } from '@angular/material/select';
+import { MatDividerModule } from '@angular/material/divider';
+import { MatListModule } from '@angular/material/list';
 import { AuthModule } from '@auth0/auth0-angular';
+import { AppRoutingModule } from './app-routing.module';
+
 import { AuthHttpInterceptor } from '@auth0/auth0-angular';
 
-import { AppRoutingModule } from './app-routing.module';
 import { HttpService } from './http.service';
+
 import { AppComponent } from './app.component';
 import { LoginComponent } from './login/login.component';
 import { StudentComponent } from './student/student.component';
+import { ProfileComponent } from './profile/profile.component';
 
+import { environment as env } from 'src/environments/environment';
 
 @NgModule({
   declarations: [
     AppComponent,
     LoginComponent,
-    StudentComponent
+    StudentComponent,
+    ProfileComponent
   ],
   imports: [
     BrowserModule,
@@ -45,11 +50,11 @@ import { StudentComponent } from './student/student.component';
     MatDividerModule,
     MatListModule,
     AuthModule.forRoot({
-      domain: "morriswa-auth-prod.us.auth0.com",
-      clientId: "KB8JodCSOD7w5h9LWhurvAUcXL2K8pYD",
+      domain: env.auth.domain,
+      clientId: env.auth.clientId,
 
       // Request this audience at user authentication time
-      audience: "https://api.student-manager.morriswa.org/api/v2/",
+      audience: env.auth.audience,
 
       // Request this scope at user authentication time
       scope: 'user',
@@ -59,10 +64,10 @@ import { StudentComponent } from './student/student.component';
         allowedList: [
           {
             // Match any request that starts 'https://YOUR_DOMAIN/api/v2/' (note the asterisk)
-            uri: 'https://api.student-manager.morriswa.org/api/v2/*',
+            uri: env.auth.audience + '*',
             tokenOptions: {
               // The attached token should target this audience
-              audience: 'https://api.student-manager.morriswa.org/api/v2/',
+              audience: env.auth.audience,
 
               // The attached token should have these scopes
               scope: 'user'

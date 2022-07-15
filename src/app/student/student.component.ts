@@ -15,23 +15,16 @@ export class StudentComponent implements OnInit {
   public readonly COURSE_TERMS: string[] = Array("FALL","WINTER","SPRING","SUMMER","OTHER")
 
 
-  // PUBLIC
+  // PUBLIC DAO
   public message: string;
-
   public studentForm: FormGroup;
   public courseForm: FormGroup;
-
-
-  // PRIVATE
-  public getProfileEditMode(): boolean {
-    return this.editProfileMode;
-  }
-  private editProfileMode: boolean;
-
   public listOfStudents: Student[] = new Array();
-  private students: Map<string,Student>;
 
-  
+
+  // PRIVATE STATES
+  private editProfileMode: boolean;
+  private students: Map<string,Student>;
   private courses: Course[] = Array();
 
 
@@ -72,26 +65,22 @@ export class StudentComponent implements OnInit {
   // INIT
   constructor(private hs: HttpService, private auth0: AuthService, private fb: FormBuilder) {
     this.message = "";
-    
     this.studentForm = this.fb.group({
       "name_first" : "",
       "name_last" : "",
       "name_middle" : "",
       "nickname" : "",
       "school_attending" : "",
-    })
-
+    });
     this.courseForm = this.fb.group({
       "year" : "",
       "term" : "",
       "title" : "",
       "creditHrs" : "",
       "gradepoint" : ""
-    })
-
+    });
     this.editProfileMode = false;
     this.students = new Map();
-  
   }
 
   ngOnInit(): void {
@@ -100,6 +89,10 @@ export class StudentComponent implements OnInit {
 
 
   // GETTER SETTER
+  public getProfileEditMode(): boolean {
+    return this.editProfileMode;
+  }
+
   public getListOfStudent(): Student[] {
     return this.listOfStudents;
   }
@@ -154,14 +147,24 @@ export class StudentComponent implements OnInit {
   public getProfileNameFirst(student: Student): string {
     return student.name_first;
   }
+
   public getProfileNameMiddle(student: Student): string {
     return student.name_middle;
   }
+
   public getProfileNameLast(student: Student): string {
     return student.name_last;
   }
+
   public getProfileSchoolAttending(student: Student): string {
     return student.school_attending;
+  }
+
+
+  // SETTER 
+  public toggleEditProfileMode(): void {
+    this.editProfileMode = !this.editProfileMode;
+    // return this.editProfileMode;
   }
 
 
@@ -225,6 +228,7 @@ export class StudentComponent implements OnInit {
   }
 
 
+  // SERVICE
   public async refreshListOfStudents() {
     await this.refreshMapOfStudents();
     this.listOfStudents = Object.values(this.students);
@@ -232,11 +236,6 @@ export class StudentComponent implements OnInit {
 
   public async refreshMapOfStudents() {
     this.students = Object.assign(this.students,await this.hs.v2studentGetAll());
-  }
-
-  public toggleEditProfileMode(): void {
-    this.editProfileMode = !this.editProfileMode;
-    // return this.editProfileMode;
   }
 
   public async loadStudent(nick: string) {

@@ -5,12 +5,14 @@ import { lastValueFrom } from 'rxjs';
 import { Course } from './interface/course';
 import { Student } from './interface/student';
 
+import { environment as env } from 'src/environments/environment';
+
 @Injectable({
   providedIn: 'root'
 })
 export class HttpService {  
   // CONST
-  readonly HTTP_URL: string = 'https://api.student-manager.morriswa.org/';
+  readonly HTTP_URL: string = env.api;
 
 
   // INIT
@@ -136,6 +138,7 @@ export class HttpService {
     return response;
   }
 
+  // PUT api/v2/student/info
   public async v2updsteStudentInfo(nickname: string, name_first: string, name_middle: string, name_last: string, school_attending: string) {
     let students: Map<string,Student> = new Map();
     await lastValueFrom(this.http.put<Student>(this.HTTP_URL + 'api/v2/student/info',{
