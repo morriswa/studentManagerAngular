@@ -2,27 +2,26 @@ import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { MatCommonModule } from '@angular/material/core';
+import { MatCommonModule, MatOptionModule } from '@angular/material/core';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
-import { MatOptionModule } from '@angular/material/core';
 import { MatSelectModule } from '@angular/material/select';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatListModule } from '@angular/material/list';
-import { AuthModule } from '@auth0/auth0-angular';
 import { AppRoutingModule } from './app-routing.module';
+import { MatToolbarModule } from '@angular/material/toolbar'
+import { MatIconModule } from '@angular/material/icon'
+import { MatMenuModule } from '@Angular/material/menu'
 
-import { AuthHttpInterceptor } from '@auth0/auth0-angular';
+import { AuthModule, AuthHttpInterceptor } from '@auth0/auth0-angular';
 
 import { HttpService } from './http.service';
-
 import { AppComponent } from './app.component';
 import { LoginComponent } from './login/login.component';
 import { StudentComponent } from './student/student.component';
-import { ProfileComponent } from './profile/profile.component';
 
 import { environment as env } from 'src/environments/environment';
 
@@ -30,8 +29,7 @@ import { environment as env } from 'src/environments/environment';
   declarations: [
     AppComponent,
     LoginComponent,
-    StudentComponent,
-    ProfileComponent
+    StudentComponent
   ],
   imports: [
     BrowserModule,
@@ -48,6 +46,9 @@ import { environment as env } from 'src/environments/environment';
     MatOptionModule,
     MatSelectModule,
     MatDividerModule,
+    MatToolbarModule,
+    MatMenuModule,
+    MatIconModule,
     MatListModule,
     AuthModule.forRoot({
       domain: env.auth.domain,

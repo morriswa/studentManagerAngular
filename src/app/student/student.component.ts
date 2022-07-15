@@ -175,8 +175,8 @@ export class StudentComponent implements OnInit {
       this.studentForm.reset();
       this.students = promise;
       this.refreshListOfStudents();
+      this.message = "Student added successfully!";
     }).catch(err => {
-      console.warn(err);
       this.message = err.message;
     });
   }
@@ -187,8 +187,8 @@ export class StudentComponent implements OnInit {
       this.studentForm.reset();
       this.students = promise;
       this.refreshListOfStudents();
+      this.message = "Student deleted successfully!";
     }).catch(err => {
-      console.warn(err);
       this.message = err.message;
     });
   }
@@ -204,11 +204,8 @@ export class StudentComponent implements OnInit {
     ).then(promise => {
       this.courseForm.reset();
       this.courses = promise;
-      this.loadStudent(nickname);
     }).catch(err => {
-      console.warn(err);
-      this.message = err.message;
-      this.loadStudent(nickname);
+      console.warn(err.message);
     })
   }
 
@@ -219,14 +216,26 @@ export class StudentComponent implements OnInit {
     ).then(promise => {
       this.courseForm.reset();
       this.courses = promise;
-      this.loadStudent(nickname);
     }).catch(err => {
-      console.warn(err);
-      this.message = err.message;
-      this.loadStudent(nickname);
+      console.warn(err.message);
     })
   }
 
+  public async sendUpdateStudentInfoRequest(nick: string) {
+    await this.hs.v2updsteStudentInfo(
+      nick,
+      this.studentForm.get('name_first')?.value,
+      this.studentForm.get('name_middle')?.value,
+      this.studentForm.get('name_last')?.value,
+      this.studentForm.get('school_attending')?.value,
+    ).then(promise => {
+      this.toggleEditProfileMode();
+      this.studentForm.reset();
+      this.refreshListOfStudents();
+    }).catch(err => {
+      console.warn(err.message);
+    }) 
+  }
 
   // SERVICE
   public async refreshListOfStudents() {
@@ -243,27 +252,9 @@ export class StudentComponent implements OnInit {
     .then(promise => {
       this.courses = promise;
     }).catch(err => {
-      console.warn(err);
+      console.warn(err.message);
       this.courses = new Array();
     })
   }
 
-  public async sendUpdateStudentInfoRequest(nick: string) {
-    await this.hs.v2updsteStudentInfo(
-      nick,
-      this.studentForm.get('name_first')?.value,
-      this.studentForm.get('name_middle')?.value,
-      this.studentForm.get('name_last')?.value,
-      this.studentForm.get('school_attending')?.value,
-    ).then(promise => {
-      this.toggleEditProfileMode();
-      this.studentForm.reset();
-      this.refreshListOfStudents();
-    }).catch(err => {
-      this.toggleEditProfileMode();
-      console.warn(err);
-      this.message = err.message;
-    }) 
-  }
- 
 }

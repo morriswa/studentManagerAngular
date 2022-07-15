@@ -1,14 +1,40 @@
-<mat-expansion-panel class="loginPanel"> <!--Login--> 
+<!-- <mat-expansion-panel class="loginPanel"> 
     <mat-expansion-panel-header>
         <mat-panel-title>Login</mat-panel-title>
     </mat-expansion-panel-header>
     
     <h1>{{ message }}</h1>
 
-    <app-profile *ngIf="this.isLoggedIn()"></app-profile>
+    
+    <h1>Welcome {{ auth0user.name }}!</h1>
    
     <mat-action-row>
-        <button mat-raised-button color="primary" (click)="logIn()" >Login auth0</button>
-        <button mat-raised-button color="primary" (click)="logout()">Logout!</button>
+        <button mat-raised-button color="primary"  >Login auth0</button>
+        <button mat-raised-button color="primary" >Logout!</button>
     </mat-action-row>
-</mat-expansion-panel>
+</mat-expansion-panel> -->
+
+<mat-toolbar>
+    <mat-toolbar-row>
+        <button mat-icon-button [matMenuTriggerFor]="loginMenu">
+            <mat-icon>menu</mat-icon>
+        </button>
+        <mat-menu #loginMenu="matMenu">
+            <button mat-menu-item (click)="logIn()">
+                <span>Login</span>
+            </button>
+            <button mat-menu-item *ngIf="this.isLoggedIn()" (click)="logout()">
+                <span>Logout</span>
+            </button>
+        </mat-menu>
+        
+        <span>MorrisWA GPA Application v1.1.4</span>
+        
+    </mat-toolbar-row>
+    <mat-toolbar-row *ngIf="this.isLoggedIn()">
+        <img [src]="auth0user.picture" id="auth0_user_picture">
+        <span >Welcome {{ getAuthenticatedUserName() }}! </span>
+    </mat-toolbar-row>
+</mat-toolbar>
+
+<button mat-raised-button color="primary" style="margin-top:10%;margin-left: 15%"  (click)="logIn()" *ngIf="!this.isLoggedIn()">Let's get started!</button>

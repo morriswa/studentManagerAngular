@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
-import { AuthService } from '@auth0/auth0-angular';
+import { AuthService, User } from '@auth0/auth0-angular';
 import { HttpService } from '../http.service';
 
 @Component({
@@ -11,6 +11,8 @@ import { HttpService } from '../http.service';
 export class LoginComponent implements OnInit {
   // PUBLIC
   public message: string; 
+  public auth0user: User;
+
 
 
   // PRIVATE
@@ -23,10 +25,14 @@ export class LoginComponent implements OnInit {
               private auth0: AuthService) {
     this.message = "";
     this.loginStatus = false;
+    this.auth0user = new User();
+    this.fetchUserProfile();
   }
 
   ngOnInit(): void {
     this.loginChecker();
+    this.fetchUserProfile();
+
   }
 
 
@@ -37,12 +43,21 @@ export class LoginComponent implements OnInit {
     });
   }
 
+  public async fetchUserProfile() {
+    this.auth0.user$.subscribe(user => {
+      this.auth0user = user!;
+    })
+  }
+
 
   // GETTER 
   public isLoggedIn(): boolean {
     return this.loginStatus;
   }
-  
+ 
+  public getAuthenticatedUserName(): string {
+    return this.auth0user.name!;
+  }
 
   // ONCLICK
   public logIn() {

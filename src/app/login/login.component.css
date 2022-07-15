@@ -4,3 +4,10 @@
     gap: 20px;
 }
 
+#auth0_user_picture {
+    height: 70%;
+
+    margin-right: 20px;
+
+    border-radius: 10%;
+}
