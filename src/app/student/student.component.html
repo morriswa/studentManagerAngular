@@ -1,4 +1,4 @@
-<mat-expansion-panel id="studentPanel" (opened)="refreshListOfStudents()">
+<mat-expansion-panel id="studentPanel" (opened)="this.refreshMapOfStudents()">
     <mat-expansion-panel-header>
         <mat-panel-title>Your Student Profiles</mat-panel-title>
     </mat-expansion-panel-header>
@@ -25,7 +25,7 @@
             </mat-action-row>
         </mat-expansion-panel>
 
-        <mat-expansion-panel *ngFor="let student of getListOfStudent()" (opened)="this.loadStudent(student.nickname);this.refreshMapOfStudents()">
+        <mat-expansion-panel *ngFor="let student of getListOfStudent()" (opened)="this.refreshListOfCourses(student.nickname)">
             <mat-expansion-panel-header>
             <mat-panel-title>{{ student.nickname }}</mat-panel-title>
             </mat-expansion-panel-header> 
@@ -77,7 +77,7 @@
             </mat-expansion-panel>
             
 
-            <mat-expansion-panel id="gradebook" (opened)="this.loadStudent(student.nickname)">
+            <mat-expansion-panel id="gradebook" (opened)="this.refreshListOfCourses(student.nickname)">
                 <mat-expansion-panel-header>
                     <mat-panel-title>Gradebook</mat-panel-title>
                     <mat-panel-description>GPA: {{ calculateGPA(student.nickname) }}</mat-panel-description>
@@ -154,12 +154,13 @@
                         <mat-panel-description>{{ getLetterGrade(course) }}</mat-panel-description>
                     </mat-expansion-panel-header> 
 
+                    
                     <mat-list>
                         <mat-list-item>Semester Taken: {{ course.term + " " + course.year }}</mat-list-item>
                         <mat-divider></mat-divider>
                         <mat-list-item>Credit Earned: {{ course.creditHrs }}</mat-list-item>
                         <mat-divider></mat-divider>
-                        <mat-list-item>Gradepoints Earned: {{ course.creditHrs*course.gradepoint }}</mat-list-item>
+                        <mat-list-item>Gradepoints Earned: {{ (course.creditHrs*course.gradepoint).toFixed(2) }}</mat-list-item>
                         <mat-divider></mat-divider>
                         <mat-list-item>Letter Grade Earned: {{ getLetterGrade(course) }}</mat-list-item> 
                     </mat-list>

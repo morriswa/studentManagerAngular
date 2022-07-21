@@ -19,47 +19,13 @@ export class StudentComponent implements OnInit {
   public message: string;
   public studentForm: FormGroup;
   public courseForm: FormGroup;
-  public listOfStudents: Student[] = new Array();
 
 
   // PRIVATE STATES
   private editProfileMode: boolean;
   private students: Map<string,Student>;
-  private courses: Course[] = Array();
-
-
-  // MATH 
-  public calculateGPA(nickname: string) {
-    let gradepoints = 0;
-    let creditHrs = 0;
-
-    this.courses.forEach(course => {
-      gradepoints += (course.gradepoint*course.creditHrs);
-      creditHrs += course.creditHrs;
-    })
-
-    return ((gradepoints / creditHrs).toFixed(2));
-  }
-
-  public calculateCreditHrs(nickname: string): number {
-    let creditHrs = 0;
-
-    this.courses.forEach(course => {
-      creditHrs += course.creditHrs
-    }) 
-
-    return creditHrs;
-  }
-
-  public calculateGradepoints(nickname: string): number {
-    let gradepoints = 0;
-
-    this.courses.forEach(course => {
-      gradepoints += (course.gradepoint*course.creditHrs);
-    }) 
-
-    return gradepoints;
-  }
+  private listOfStudents: Student[]; 
+  private courses: Course[];
 
 
   // INIT
@@ -81,10 +47,12 @@ export class StudentComponent implements OnInit {
     });
     this.editProfileMode = false;
     this.students = new Map();
+    this.listOfStudents = new Array();
+    this.courses = new Array();
   }
 
   ngOnInit(): void {
-    this.refreshListOfStudents();
+    this.refreshMapOfStudents();
   }
 
 
@@ -160,6 +128,38 @@ export class StudentComponent implements OnInit {
     return student.school_attending;
   }
 
+  public calculateGPA(nickname: string) {
+    let gradepoints = 0;
+    let creditHrs = 0;
+
+    this.courses.forEach(course => {
+      gradepoints += (course.gradepoint*course.creditHrs);
+      creditHrs += course.creditHrs;
+    })
+
+    return ((gradepoints / creditHrs).toFixed(2));
+  }
+
+  public calculateCreditHrs(nickname: string) {
+    let creditHrs = 0;
+
+    this.courses.forEach(course => {
+      creditHrs += course.creditHrs
+    }) 
+
+    return creditHrs;
+  }
+
+  public calculateGradepoints(nickname: string) {
+    let gradepoints = 0;
+
+    this.courses.forEach(course => {
+      gradepoints += (course.gradepoint*course.creditHrs);
+    }) 
+
+    return gradepoints.toFixed(2);
+  }
+
 
   // SETTER 
   public toggleEditProfileMode(): void {
@@ -169,92 +169,84 @@ export class StudentComponent implements OnInit {
 
 
   // ONCLICK 
-  public async addStudent() {
-    await this.hs.v2studentAdd(this.studentForm.get('nickname')?.value)
-    .then(promise => {
-      this.studentForm.reset();
-      this.students = promise;
-      this.refreshListOfStudents();
-      this.message = "Student added successfully!";
-    }).catch(err => {
-      this.message = err.message;
+  public addStudent() {
+    this.hs.v2studentAdd(this.studentForm.get('nickname')?.value)
+    .subscribe({
+      next : (obs) => {
+        this.students = Object.assign(new Map<String,Student>,obs);
+        this.listOfStudents = Object.values(this.students);
+        this.studentForm.reset();
+        this.message = "Student added successfully!";
+      }, error : (err) => {
+        this.message = err.error.message;
+      }
     });
   }
 
-  public async delStudent() {
-    await this.hs.v2studentDel(this.studentForm.get('nickname')?.value)
-    .then(promise => {
-      this.studentForm.reset();
-      this.students = promise;
-      this.refreshListOfStudents();
-      this.message = "Student deleted successfully!";
-    }).catch(err => {
-      this.message = err.message;
+  public delStudent() {
+    this.hs.v2studentDel(this.studentForm.get('nickname')?.value)
+    .subscribe({
+      next: (obs) => {
+        this.students = Object.assign(new Map<String,Student>,obs);
+        this.listOfStudents = Object.values(this.students);
+        this.studentForm.reset();    
+        this.message = "Student deleted successfully!";
+      }, error : (err) => {
+        this.message = err.error.message;
+      }
     });
   }
 
-  public async addCourse(nickname: string) {
-    await this.hs.v2courseAdd(
+  public addCourse(nickname: string) {
+    this.hs.v2courseAdd(
       nickname,
       this.courseForm.get('year')?.value,
       this.courseForm.get('term')?.value,
       this.courseForm.get('title')?.value,
       this.courseForm.get('creditHrs')?.value,
       this.courseForm.get('gradepoint')?.value,
-    ).then(promise => {
+    ).subscribe(obs => {
+      this.courses = Object.create(obs);
       this.courseForm.reset();
-      this.courses = promise;
-    }).catch(err => {
-      console.warn(err.message);
+    });
+  }
+
+  public delCourse(nickname: string,id: number) {
+    this.hs.v2courseDel(nickname, id
+    ).subscribe(obs => {
+      this.courses = Object.create(obs);
     })
   }
 
-  public async delCourse(nickname: string,id: number) {
-    await this.hs.v2courseDel(
-      nickname,
-      id
-    ).then(promise => {
-      this.courseForm.reset();
-      this.courses = promise;
-    }).catch(err => {
-      console.warn(err.message);
-    })
-  }
-
-  public async sendUpdateStudentInfoRequest(nick: string) {
-    await this.hs.v2updsteStudentInfo(
+  public sendUpdateStudentInfoRequest(nick: string) {
+    this.hs.v2updsteStudentInfo(
       nick,
       this.studentForm.get('name_first')?.value,
       this.studentForm.get('name_middle')?.value,
       this.studentForm.get('name_last')?.value,
       this.studentForm.get('school_attending')?.value,
-    ).then(promise => {
-      this.toggleEditProfileMode();
-      this.studentForm.reset();
-      this.refreshListOfStudents();
-    }).catch(err => {
-      console.warn(err.message);
-    }) 
+    ).subscribe({
+      next: (obs) => {
+        this.toggleEditProfileMode();
+        this.refreshMapOfStudents();
+        this.studentForm.reset();
+      }, error : (err) => console.error(err)
+    });
   }
 
-  // SERVICE
-  public async refreshListOfStudents() {
-    await this.refreshMapOfStudents();
-    this.listOfStudents = Object.values(this.students);
+  
+  // SERVICE OBSERVER
+  public refreshMapOfStudents() {
+    this.hs.v2studentGetAll().subscribe(obs => {
+      this.students = Object.assign(new Map<String,Student>,obs);
+      this.listOfStudents = Object.values(this.students);
+    });
   }
 
-  public async refreshMapOfStudents() {
-    this.students = Object.assign(this.students,await this.hs.v2studentGetAll());
-  }
-
-  public async loadStudent(nick: string) {
-    await this.hs.v2studentLoad(nick)
-    .then(promise => {
-      this.courses = promise;
-    }).catch(err => {
-      console.warn(err.message);
-      this.courses = new Array();
-    })
+  public refreshListOfCourses(nick: string) {
+    this.hs.v2studentLoad(nick).subscribe(obs => {
+      this.courses = Object.create(obs);
+    });
   }
 
 }

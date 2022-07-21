@@ -59,7 +59,7 @@ import { environment as env } from 'src/environments/environment';
       audience: env.auth.audience,
 
       // Request this scope at user authentication time
-      scope: 'user',
+      scope: 'read:students write:students',
 
       // Specify configuration for the interceptor              
       httpInterceptor: {
@@ -72,7 +72,7 @@ import { environment as env } from 'src/environments/environment';
               audience: env.auth.audience,
 
               // The attached token should have these scopes
-              scope: 'user'
+              scope: 'read:students write:students'
             }
           }
         ]

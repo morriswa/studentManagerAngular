@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
 import { AuthService, User } from '@auth0/auth0-angular';
+import { firstValueFrom, lastValueFrom, observable } from 'rxjs';
 import { HttpService } from '../http.service';
 
 @Component({
@@ -14,14 +14,12 @@ export class LoginComponent implements OnInit {
   public auth0user: User;
 
 
-
   // PRIVATE
   private loginStatus: boolean;
 
 
   // INIT
   constructor(private hs: HttpService, 
-              private fb: FormBuilder,
               private auth0: AuthService) {
     this.message = "";
     this.loginStatus = false;
@@ -32,21 +30,34 @@ export class LoginComponent implements OnInit {
   ngOnInit(): void {
     this.loginChecker();
     this.fetchUserProfile();
+    this.sayHi();
+  }
 
+
+  // DEBUGGING 
+  public async sayHi() {
+    let email: string = await firstValueFrom(this.auth0.user$).then(promise => {
+      return promise?.email!
+    });
+    this.hs.v2hello(email).subscribe(obs => console.log(obs));
   }
 
 
   // SERVICE 
-  private async loginChecker() {
+  private loginChecker() {
     this.auth0.isAuthenticated$.subscribe(bool => {
       this.loginStatus = bool;
     });
   }
 
-  public async fetchUserProfile() {
-    this.auth0.user$.subscribe(user => {
-      this.auth0user = user!;
-    })
+  private fetchUserProfile() {
+    this.auth0.user$.subscribe({
+      next : (user) => {
+        this.auth0user = user!;
+      }, error: (err) => {
+        console.error(err);
+      }
+    });
   }
 
 
@@ -58,6 +69,7 @@ export class LoginComponent implements OnInit {
   public getAuthenticatedUserName(): string {
     return this.auth0user.name!;
   }
+
 
   // ONCLICK
   public logIn() {
