@@ -40,13 +40,19 @@
                 </mat-expansion-panel-header>
 
                 <mat-list>
+                    <mat-list-item>Pronouns: {{ getProfilePronouns(student) }}</mat-list-item>
+                    <mat-divider></mat-divider>
                     <mat-list-item>Full Name: {{ getProfileNameFirst(student) + " " + getProfileNameMiddle(student) + " " + getProfileNameLast(student) }}</mat-list-item>
                     <mat-divider></mat-divider>
                     <mat-list-item>School Attending: {{ getProfileSchoolAttending(student) }}</mat-list-item>
                 </mat-list> 
 
                     <form [formGroup]="studentForm" id="profileEditor" *ngIf="this.getProfileEditMode()">
-                         
+                        <mat-form-field appearance="outline">
+                            <mat-label>Pronouns</mat-label>
+                            <input matInput type="text" name="pronouns" formControlName="pronouns">
+                        </mat-form-field>
+                        <mat-divider></mat-divider>
                         <mat-form-field appearance="outline">
                             <mat-label>First Name</mat-label>
                             <input matInput type="text" name="name_first" formControlName="name_first">

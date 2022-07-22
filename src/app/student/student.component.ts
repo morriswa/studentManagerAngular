@@ -32,6 +32,7 @@ export class StudentComponent implements OnInit {
   constructor(private hs: HttpService, private auth0: AuthService, private fb: FormBuilder) {
     this.message = "";
     this.studentForm = this.fb.group({
+      "pronouns" : "",
       "name_first" : "",
       "name_last" : "",
       "name_middle" : "",
@@ -110,6 +111,10 @@ export class StudentComponent implements OnInit {
       return "?"
     }
     
+  }
+
+  public getProfilePronouns(student: Student): string {
+    return student.pronouns;
   }
 
   public getProfileNameFirst(student: Student): string {
@@ -221,6 +226,7 @@ export class StudentComponent implements OnInit {
   public sendUpdateStudentInfoRequest(nick: string) {
     this.hs.v2updsteStudentInfo(
       nick,
+      this.studentForm.get('pronouns')?.value,
       this.studentForm.get('name_first')?.value,
       this.studentForm.get('name_middle')?.value,
       this.studentForm.get('name_last')?.value,

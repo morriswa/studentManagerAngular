@@ -23,20 +23,25 @@ export class HttpService {
     })
   }
 
-  // GET api/v2/hello
-  public v2hello(email: string) {
-    return this.http.get(this.HTTP_URL + 'api/v2/hello',
+  // // GET api/v2/hello
+  // public v2hello(email: string) {
+  //   return this.http.get(this.HTTP_URL + 'api/v2/hello',
+  //   {
+  //     "headers" : {
+  //       "email" : email
+  //     }, "responseType" : "text"
+  //   });
+  // }
+
+  // POST api/v2/login
+  public v2login() {
+    return this.http.post(this.HTTP_URL + 'api/v2/login',{},
     {
       "headers" : {
-        "email" : email
+        "email" : this.EMAIL
       }, "responseType" : "text"
     });
   }
-
-  // // POST api/v2/login
-  // public v2login() {
-  //   return this.http.post<string>(this.HTTP_URL + 'api/v2/login',{});
-  // }
 
   // GET api/v2/student/all
   public v2studentGetAll() {
@@ -118,12 +123,13 @@ export class HttpService {
 
   // PUT api/v2/student/info
   public v2updsteStudentInfo( 
-    nickname: string, name_first: string, name_middle: string, 
-    name_last: string, school_attending: string) 
+    nickname: string, pronouns: string, name_first: string, 
+    name_middle: string, name_last: string, school_attending: string) 
   {
     return this.http.put<Student>(this.HTTP_URL + 'api/v2/student/info',
     {
       "nickname" : nickname,
+      "pronouns" : pronouns,
       "name_first" : name_first,
       "name_middle" : name_middle,
       "name_last" : name_last,

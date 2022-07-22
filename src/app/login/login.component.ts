@@ -30,16 +30,17 @@ export class LoginComponent implements OnInit {
   ngOnInit(): void {
     this.loginChecker();
     this.fetchUserProfile();
-    this.sayHi();
   }
 
 
   // DEBUGGING 
-  public async sayHi() {
-    let email: string = await firstValueFrom(this.auth0.user$).then(promise => {
-      return promise?.email!
-    });
-    this.hs.v2hello(email).subscribe(obs => console.log(obs));
+  public loginAndRegisterFlow() {
+    if (this.isLoggedIn()) {
+      this.hs.v2login().subscribe({
+        next: (obs) => console.log(obs),
+        error: (err) => console.error(err)
+      });
+    }
   }
 
 
@@ -54,6 +55,7 @@ export class LoginComponent implements OnInit {
     this.auth0.user$.subscribe({
       next : (user) => {
         this.auth0user = user!;
+        this.loginAndRegisterFlow();
       }, error: (err) => {
         console.error(err);
       }
