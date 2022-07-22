@@ -1,7 +1,7 @@
+import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { AuthService, User } from '@auth0/auth0-angular';
-import { firstValueFrom, lastValueFrom, observable } from 'rxjs';
-import { HttpService } from '../http.service';
+import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'app-login',
@@ -16,31 +16,21 @@ export class LoginComponent implements OnInit {
 
   // PRIVATE
   private loginStatus: boolean;
+  private EMAIL: string;
 
 
   // INIT
-  constructor(private hs: HttpService, 
+  constructor(private http: HttpClient, 
               private auth0: AuthService) {
     this.message = "";
     this.loginStatus = false;
     this.auth0user = new User();
-    this.fetchUserProfile();
+    this.EMAIL = "";
   }
 
   ngOnInit(): void {
     this.loginChecker();
     this.fetchUserProfile();
-  }
-
-
-  // DEBUGGING 
-  public loginAndRegisterFlow() {
-    if (this.isLoggedIn()) {
-      this.hs.v2login().subscribe({
-        next: (obs) => console.log(obs),
-        error: (err) => console.error(err)
-      });
-    }
   }
 
 
@@ -55,11 +45,26 @@ export class LoginComponent implements OnInit {
     this.auth0.user$.subscribe({
       next : (user) => {
         this.auth0user = user!;
+        this.EMAIL = this.auth0user.email!;
         this.loginAndRegisterFlow();
       }, error: (err) => {
         console.error(err);
       }
     });
+  }
+
+  private loginAndRegisterFlow() {
+    if (this.isLoggedIn()) {
+      this.http.post(environment.api+'login',{},
+      {
+        "headers" : {
+          "email" : this.EMAIL
+        }, "responseType" : "text"
+      }).subscribe({
+        next: (obs) => console.log(obs),
+        error: (err) => console.error(err)
+      });
+    }
   }
 
 

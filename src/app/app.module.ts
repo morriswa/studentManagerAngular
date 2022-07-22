@@ -19,7 +19,6 @@ import { MatListModule } from '@angular/material/list';
 
 import { AuthModule, AuthHttpInterceptor } from '@auth0/auth0-angular';
 
-import { HttpService } from './http.service';
 import { AppComponent } from './app.component';
 import { LoginComponent } from './login/login.component';
 import { StudentComponent } from './student/student.component';
@@ -79,7 +78,7 @@ import { environment as env } from 'src/environments/environment';
       ]}
     })
   ],
-  providers: [HttpService,{provide: HTTP_INTERCEPTORS, useClass: AuthHttpInterceptor, multi: true }],
+  providers: [{provide: HTTP_INTERCEPTORS, useClass: AuthHttpInterceptor, multi: true }],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

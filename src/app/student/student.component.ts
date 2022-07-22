@@ -1,9 +1,10 @@
 import { Component, OnInit } from '@angular/core';
-import { HttpService } from '../http.service';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { Course } from '../interface/course';
 import { AuthService } from '@auth0/auth0-angular';
 import { Student } from '../interface/student';
+import { HttpClient } from '@angular/common/http';
+import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'app-student',
@@ -22,14 +23,15 @@ export class StudentComponent implements OnInit {
 
 
   // PRIVATE STATES
+  private EMAIL: string;
   private editProfileMode: boolean;
-  private students: Map<string,Student>;
+  private students: Map<String,Student>;
   private listOfStudents: Student[]; 
   private courses: Course[];
 
 
   // INIT
-  constructor(private hs: HttpService, private auth0: AuthService, private fb: FormBuilder) {
+  constructor(private http: HttpClient, private auth0: AuthService, private fb: FormBuilder) {
     this.message = "";
     this.studentForm = this.fb.group({
       "pronouns" : "",
@@ -50,12 +52,14 @@ export class StudentComponent implements OnInit {
     this.students = new Map();
     this.listOfStudents = new Array();
     this.courses = new Array();
+    this.EMAIL = "";
   }
 
   ngOnInit(): void {
+    this.refreshAuthUserEmail();
     this.refreshMapOfStudents();
   }
-
+  
 
   // GETTER SETTER
   public getProfileEditMode(): boolean {
@@ -175,8 +179,13 @@ export class StudentComponent implements OnInit {
 
   // ONCLICK 
   public addStudent() {
-    this.hs.v2studentAdd(this.studentForm.get('nickname')?.value)
-    .subscribe({
+    this.http.post<Map<string, Student>>(environment.api + 'student/add',{},
+    {
+      "headers" : {
+        "email" : this.EMAIL,
+        "nick" : this.studentForm.get('nickname')?.value
+      }, "responseType" : "json"
+    }).subscribe({
       next : (obs) => {
         this.students = Object.assign(new Map<String,Student>,obs);
         this.listOfStudents = Object.values(this.students);
@@ -189,8 +198,13 @@ export class StudentComponent implements OnInit {
   }
 
   public delStudent() {
-    this.hs.v2studentDel(this.studentForm.get('nickname')?.value)
-    .subscribe({
+    this.http.delete<Map<string, Student>>(environment.api + 'student/del',
+    {
+      "headers" : {
+        "email" : this.EMAIL,
+        "nick" : this.studentForm.get('nickname')?.value
+      }, "responseType" : "json"
+    }).subscribe({
       next: (obs) => {
         this.students = Object.assign(new Map<String,Student>,obs);
         this.listOfStudents = Object.values(this.students);
@@ -203,35 +217,52 @@ export class StudentComponent implements OnInit {
   }
 
   public addCourse(nickname: string) {
-    this.hs.v2courseAdd(
-      nickname,
-      this.courseForm.get('year')?.value,
-      this.courseForm.get('term')?.value,
-      this.courseForm.get('title')?.value,
-      this.courseForm.get('creditHrs')?.value,
-      this.courseForm.get('gradepoint')?.value,
-    ).subscribe(obs => {
+    this.http.post<Array<Course>>(environment.api + 'course/add',
+    { // REQUEST BODY
+      "nickname" : nickname,
+      "year" : this.courseForm.get('year')?.value,
+      "term" : this.courseForm.get('term')?.value,
+      "title" : this.courseForm.get('title')?.value,
+      "creditHrs" : this.courseForm.get('creditHrs')?.value,
+      "gradepoint" : this.courseForm.get('gradepoint')?.value
+    },{
+      "headers" : {
+        "email" : this.EMAIL
+      }, "responseType" : "json"
+    }).subscribe(obs => {
       this.courses = Object.create(obs);
       this.courseForm.reset();
     });
   }
 
   public delCourse(nickname: string,id: number) {
-    this.hs.v2courseDel(nickname, id
-    ).subscribe(obs => {
+    this.http.patch<Array<Course>>(environment.api + 'course/del',
+    {
+      "nickname" : nickname,
+      "id" : id
+    },{
+      "headers" : {
+        "email" : this.EMAIL
+      }, "responseType" : "json"
+    }).subscribe(obs => {
       this.courses = Object.create(obs);
     })
   }
 
   public sendUpdateStudentInfoRequest(nick: string) {
-    this.hs.v2updsteStudentInfo(
-      nick,
-      this.studentForm.get('pronouns')?.value,
-      this.studentForm.get('name_first')?.value,
-      this.studentForm.get('name_middle')?.value,
-      this.studentForm.get('name_last')?.value,
-      this.studentForm.get('school_attending')?.value,
-    ).subscribe({
+    this.http.put<Student>(environment.api + 'student/info',
+    {
+      "nickname" : nick,
+      "pronouns" : this.studentForm.get('pronouns')?.value,
+      "name_first" : this.studentForm.get('name_first')?.value,
+      "name_middle" : this.studentForm.get('name_middle')?.value,
+      "name_last" : this.studentForm.get('name_last')?.value,
+      "school_attending" : this.studentForm.get('school_attending')?.value
+    },{
+      "headers" : {
+        "email" : this.EMAIL
+      }, "responseType" : "json" 
+    }).subscribe({
       next: (obs) => {
         this.toggleEditProfileMode();
         this.refreshMapOfStudents();
@@ -242,16 +273,44 @@ export class StudentComponent implements OnInit {
 
   
   // SERVICE OBSERVER
+  private refreshAuthUserEmail() {
+    this.auth0.user$.subscribe({
+      next: (user) => this.EMAIL = user?.email!,
+      error: (err) => console.error(err)
+    });
+  }
+  
   public refreshMapOfStudents() {
-    this.hs.v2studentGetAll().subscribe(obs => {
-      this.students = Object.assign(new Map<String,Student>,obs);
-      this.listOfStudents = Object.values(this.students);
+    this.http.get<Map<string, Student>>(environment.api + 'student/all',
+    {
+      "headers" : {
+        "email" : this.EMAIL
+      }, "responseType" : "json"
+    }).subscribe({
+      next: (obs) => {
+        this.students = Object.assign(new Map<String,Student>,obs);
+        this.listOfStudents = Object.values(this.students);
+      }, error: (err) => {
+        // console.error(err);
+        this.students = new Map<String,Student>();
+        this.listOfStudents = new Array<Student>();
+      }
     });
   }
 
   public refreshListOfCourses(nick: string) {
-    this.hs.v2studentLoad(nick).subscribe(obs => {
-      this.courses = Object.create(obs);
+    this.http.get<Array<Course>>(environment.api + 'student/load',
+    {
+      "headers" : {
+        "email" : this.EMAIL,
+        "nick" : nick
+      }, "responseType" : "json"
+    }).subscribe({
+      next: (obs) => this.courses = Object.create(obs),
+      error: (err) => {
+        console.error(err);
+        this.courses = new Array<Course>();
+      }
     });
   }
 
